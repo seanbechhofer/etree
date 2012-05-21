@@ -37,6 +37,9 @@ def generateLastFMMappingRDF()
         $graph << [sim, VOCAB_SIM_OBJECT, lastfm]
         $graph << [lastfm, VOCAB_SIM_OBJECT_OF, sim]
         $graph << [sim, VOCAB_SIM_METHOD, VOCAB_ETREE_SIMPLE_LASTFM_MATCH]
+
+        # Provenance triple -- this conversion was made by an activity that Sean was responsible for. 
+        $graph << [sim, VOCAB_PROV_ATTRIBUTED_TO, SEAN]
       end
     end
   end
@@ -77,6 +80,9 @@ def generateGeoNamesMappingRDF()
       $graph << [sim, VOCAB_SIM_OBJECT, geoname]
       $graph << [geoname, VOCAB_SIM_OBJECT_OF, sim]
 
+      # Provenance triple -- this conversion was made by an activity that Sean was responsible for. 
+      $graph << [sim, VOCAB_PROV_ATTRIBUTED_TO, SEAN]
+
       if row['lastfm_id'] then
         # Used geo and last fm to crosscheck. 
         $graph << [sim, VOCAB_SIM_METHOD, VOCAB_ETREE_SIMPLE_GEO_AND_LASTFM_MATCH]
@@ -87,30 +93,6 @@ def generateGeoNamesMappingRDF()
     end
     puts "@@@ Done Chunk #{offset}" if BEHAVIOUR[:verbose]
     offset = offset + 1
-    #   stmt = LOCATIONS.prepare( 'select geo_id, lastfm_id from locations where name=? and location=?' )
-    #   geos = stmt.execute(row['venue'],row['coverage'])
-    #   geos.each do |geo|
-    #     if !geo['geo_id'].eql?("") then
-    #       venue = RDF::URI.new(ONTOLOGY + "venue/" + row['identifier'])
-    #       geoname = RDF::URI.new("http://www.geonames.org/" + geo['geo_id'])
-    #       # Give the node an id so that pubby handles it well. @@Hack.
-    #       sim = RDF::URI.new(ONTOLOGY + "venue/" + row['identifier'] + "/geo-sim" )
-    #       $graph << [sim, type, VOCAB_SIM_SIMILARITY]
-    #       $graph << [sim, VOCAB_SIM_SUBJECT, venue]
-    #       $graph << [venue, VOCAB_SIM_SUBJECT_OF, sim]
-    #       $graph << [sim, VOCAB_SIM_OBJECT, geoname]
-    #       $graph << [geoname, VOCAB_SIM_OBJECT_OF, sim]
-    #       if row['lastfm_id'].eql?("") then
-    #         # Only geo information used
-    #         $graph << [sim, VOCAB_SIM_METHOD, VOCAB_ETREE_SIMPLE_GEO_MATCH]
-    #       else
-    #         # Used geo and last fm to crosscheck. 
-    #         $graph << [sim, VOCAB_SIM_METHOD, VOCAB_ETREE_SIMPLE_GEO_AND_LASTFM_MATCH]
-    #       end
-    #     end
-    #   end
-    #   offset = offset + 1
-    # end
   end
   return $graph
 end

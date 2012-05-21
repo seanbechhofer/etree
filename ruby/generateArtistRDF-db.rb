@@ -29,11 +29,6 @@ def generateArtistRDF()
   collection = RDF::URI.new(ONTOLOGY + "collection")
   contains = RDF::URI.new(ETREE + "contains")
   
-  chooser = []
-  (1..100).each do |n|
-    chooser << n
-  end
-
   stmt = DATABASE.prepare( "select id, name from artist" )
   rows = stmt.execute()
   rows.each do |row|
@@ -49,7 +44,7 @@ def generateArtistRDF()
     $graph << [artist, skos_label, RDF::Literal.new(row['name'])]
     
     # Adding artists into the collection
-    $graph << [collection, contains, artist]
+    # $graph << [collection, contains, artist]
   end
   return $graph
 end
@@ -65,7 +60,9 @@ def generateMusicBrainzMappingRDF()
     puts row['name'] if BEHAVIOUR[:debug]
     if (row['confidence']) > 0 then
       artist = RDF::URI.new(ONTOLOGY + "artist/" + row['id'])
-      mbId = RDF::URI.new(MB + "artist/" + row['mbId'])
+      # Use #_ for NIR
+      puts "X"
+      mbId = RDF::URI.new(MB + "artist/" + row['mbId'] + "#_")
       # Give the node an id so that pubby handles it well. @@Hack.
       sim = RDF::URI.new(ONTOLOGY + "artist/" + row['id'] + "/mb-sim")
       $graph << [sim, type, VOCAB_SIM_SIMILARITY]
@@ -75,6 +72,10 @@ def generateMusicBrainzMappingRDF()
       $graph << [mbId, VOCAB_SIM_OBJECT_OF, sim] 
       $graph << [sim, VOCAB_SIM_METHOD, VOCAB_ETREE_SIMPLE_MB_MATCH]
       $graph << [sim, VOCAB_SIM_WEIGHT, RDF::Literal.new(row['confidence'], :datatype => RDF::XSD.double)]
+
+      # Provenance triple -- this conversion was made by an activity that Sean was responsible for. 
+      $graph << [sim, VOCAB_PROV_ATTRIBUTED_TO, SEAN]
+
     end
   end
   return $graph

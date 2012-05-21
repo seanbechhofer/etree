@@ -9,6 +9,7 @@ MO="http://purl.org/ontology/mo/"
 MB="http://musicbrainz.org/"
 GEO="http://www.geonames.org/ontology"
 SIM="http://purl.org/ontology/similarity/"
+PROV="http://www.w3.org/ns/prov#"
 
 ETREE_HOST = "etree.linkedmusic.org"
 ETREE = "http://#{ETREE_HOST}/vocab/"
@@ -54,6 +55,10 @@ VOCAB_SIM_SIMILARITY = RDF::URI.new(SIM + "Similarity")
 VOCAB_SIM_METHOD = RDF::URI.new(SIM + "method")
 VOCAB_SIM_WEIGHT = RDF::URI.new(SIM + "weight")
 VOCAB_SIM_ASSOCIATION_METHOD = RDF::URI.new(SIM + "AssociationMethod")
+
+VOCAB_PROV_ATTRIBUTED_TO = RDF::URI.new(PROV + "wasAttributedTo")
+
+SEAN = RDF::URI.new(ONTOLOGY + "person/sean-bechhofer")
 
 def logError(message)
   File.open('errors.log','a') do |f|
