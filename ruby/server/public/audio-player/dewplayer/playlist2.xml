@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<playlist version="1" xmlns="http://xspf.org/ns/0/">
+  <title>Playlist</title>
+  <trackList>
+    <track>
+      <location>http://archive.org/download/mogwai1999-09-14.flacf/mogwai1999-09-14t01_vbr.mp3</location>
+      <creator></creator>
+      <album>xx</album>
+      <title>Mogwai Fear Satan</title>
+    </track>
+    <track>
+      <location>http://archive.org/download/mogwai1999-09-14.flacf/mogwai1999-09-14t02_vbr.mp3</location>
+      <creator></creator>
+      <album>xx</album>
+      <title>X-Mas Steps</title>
+    </track>
+    <track>
+      <location>http://archive.org/download/mogwai1999-09-14.flacf/mogwai1999-09-14t03_vbr.mp3</location>
+      <creator></creator>
+      <album>xx</album>
+      <title>Small Children in the Background</title>
+    </track>
+    <track>
+      <location>http://archive.org/download/mogwai1999-09-14.flacf/mogwai1999-09-14t04_vbr.mp3</location>
+      <creator></creator>
+      <album>xx</album>
+      <title>May Nothing But Happiness Come Through Your Door</title>
+    </track>
+    <track>
+      <location>http://archive.org/download/mogwai1999-09-14.flacf/mogwai1999-09-14t05_vbr.mp3</location>
+      <creator></creator>
+      <album>xx</album>
+      <title>Summer</title>
+    </track>
+    <track>
+      <location>http://archive.org/download/mogwai1999-09-14.flacf/mogwai1999-09-14t06_vbr.mp3</location>
+      <creator></creator>
+      <album>xx</album>
+      <title>Stanley Kubrick</title>
+    </track>
+    <track>
+      <location>http://archive.org/download/mogwai1999-09-14.flacf/mogwai1999-09-14t07_vbr.mp3</location>
+      <creator></creator>
+      <album>xx</album>
+      <title>Ex-Cowboy</title>
+    </track>
+    <track>
+      <location>http://archive.org/download/mogwai1999-09-14.flacf/mogwai1999-09-14t08_vbr.mp3</location>
+      <creator></creator>
+      <album>xx</album>
+      <title>Kappa</title>
+    </track>
+    <track>
+      <location>http://archive.org/download/mogwai1999-09-14.flacf/mogwai1999-09-14t09_vbr.mp3</location>
+      <creator></creator>
+      <album>xx</album>
+      <title>Helicon 1</title>
+    </track>
+    <track>
+      <location>http://archive.org/download/mogwai1999-09-14.flacf/mogwai1999-09-14t10_vbr.mp3</location>
+      <creator></creator>
+      <album>xx</album>
+      <title>Like Herod</title>
+    </track>
+  </trackList>
+</playlist>

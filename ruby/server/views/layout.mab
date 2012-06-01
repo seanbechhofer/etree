@@ -1,0 +1,23 @@
+html do
+  head {
+    title "etree"
+    link :rel => "stylesheet", :href => "/css/style.css"
+  }    
+  body do
+    div.content! do
+      div.head! do
+        a :href => "/" do 
+          img.logo! :src => "/band.png"
+        end
+      end
+      yield
+    end
+    div.footer! do
+      p do
+        span "Powered by "
+        a "linkedmusic.org", :href => "http://etree.linkedmusic.org" 
+      end
+    end
+
+  end
+end

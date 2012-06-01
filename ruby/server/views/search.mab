@@ -1,0 +1,14 @@
+h1 "search"
+
+p.results do
+  span "Search results for "
+  span.query "#{query}"
+end
+
+ul do |ul|
+  results.each do |result|
+    ul.li {
+      a result[:label], :href => "/#{type}/" + result[:thing]
+    }
+  end
+end

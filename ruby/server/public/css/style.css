@@ -1,0 +1,63 @@
+body {font-family: Georgia;
+  padding: 10px;
+  margin: 10px;
+  background: #ccc
+}
+#content {
+  background: #fff;
+  padding: 10px;
+  border: solid #888 2px;
+}
+#logo {
+  width: 200px;
+/*  border: 1px solid; */
+}
+#head {
+  text-align: center;
+}
+#footer {
+  text-align: center;
+}
+.search input {
+  margin-left: 20px;  
+}
+.navigation li {
+  list-style-type: none;
+  display: inline;
+  padding-right: 10px;
+}
+#player {
+  float: right;
+}
+a {color: #444}
+.banner {font-size: 300%; margin-bottom:10px; text-align: center;}
+.event {margin-top: 5px;}
+.event .artist {font-size:150%}
+.event .details {margin-left: 10px;}
+.event .date {font-style: italic; color: #888}
+.month {text-weight: bold; 
+  font-size: 200%; 
+  margin-top: 5px; 
+  margin-bottom: 5px; 
+  background: #444; 
+  color: #fff; 
+  padding: 10px; 
+  padding-left: 40px;}
+dt {font-weight: bold;}
+ol.tracks {margin-top: 0px;
+  margin-bottom: 0px;
+}
+a {
+  text-decoration: none;
+/*  font-weight: bold; */
+  color: #844;
+}
+.results {
+    color: #484;
+}
+.results .query {
+    font-weight: bold;
+}
+.sorry {
+    font-style: italic;
+}

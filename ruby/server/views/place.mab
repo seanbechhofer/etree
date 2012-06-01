@@ -1,0 +1,11 @@
+h1 name
+p do
+  a query, :href => query
+end
+ul do |ul|
+  results.each do |result|
+    ul.li {
+      a result[:event], :href => "/event/" + result[:evt]
+    }
+  end
+end

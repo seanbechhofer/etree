@@ -1,0 +1,10 @@
+h1 "Search"
+div.search do
+  form :action => "search" do 
+    input :type => "text", :name => "query", :size => "40"
+    input "Artists", :type => "radio", :name => "type", :value => "artist", :checked => true
+    input "Events", :type => "radio", :name => "type", :value => "event"
+    input :type => "submit", :value => "Go!"
+  end
+end
+
