@@ -1,4 +1,4 @@
-h1 "search"
+h1 "Search"
 
 p.results do
   span "Search results for "

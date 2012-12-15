@@ -1,6 +1,6 @@
-html do
+xhtml_rdfa do
   head {
-    title "etree"
+    title pageTitle
     link :rel => "stylesheet", :href => "/css/style.css"
   }    
   body do
@@ -10,7 +10,7 @@ html do
           img.logo! :src => "/band.png"
         end
       end
-      yield
+      yield 
     end
     div.footer! do
       p do

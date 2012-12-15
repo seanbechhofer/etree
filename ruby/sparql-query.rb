@@ -7,9 +7,9 @@ require 'json'
 require 'yaml'
 require 'csv'
 
-$host = "localhost"
-$port = "3030"
-$sparql = "/etree/sparql"
+$host = "etree.linkedmusic.org"
+$port = "80"
+$sparql = "/sparql"
 # $port = "9091"
 # $sparql = "/sparql/"
 # $port = "9090"

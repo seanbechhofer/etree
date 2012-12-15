@@ -40,6 +40,16 @@ results.each do |result|
     end
     dt "country"
     dd result[:country]
+    dt "keywords"
+    dd do
+      ul.keywords do 
+        keys.each do |key|
+          li do
+            a key[:keyword].to_s, :href => "/key/" + key[:keyword].to_s
+          end
+        end
+      end
+    end
     dt "tracks"
     dd do 
       ol.tracks do

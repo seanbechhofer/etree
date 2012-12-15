@@ -118,7 +118,13 @@ def generatePerformanceRDF(performances, doTracks)
         
         puts perf[:title] if BEHAVIOUR[:verbose]
         skos_label = RDF::SKOS.prefLabel
+        see_also = RDF::RDF.seeAlso
+
         $graph << [performance, skos_label, RDF::Literal.new(perf[:title])] if perf[:title]
+
+        # Link to archive.org details.
+        iaDetails = RDF::URI.new("http://archive.org/details/" + performance_id)
+        $graph << [performance, see_also, iaDetails]
         
         # Just using start date
         if perf[:date] then
