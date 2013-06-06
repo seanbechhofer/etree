@@ -31,12 +31,12 @@ div.search do
     input "Tracks", :type => "radio", :name => "type", :value => "track"
     input "Locations", :type => "radio", :name => "type", :value => "geo"
     input "Genre", :type => "radio", :name => "type", :value => "genre"
-    select :name=> "genre" do
+    select :class => "select", :name=> "genre" do
       tags.each do |tag|
         option tag[:tn]
       end
     end
-    input :type => "submit", :value => "Go!"
+    input :class => "button", :type => "submit", :value => "Go!"
   end
 end
 

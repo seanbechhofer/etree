@@ -8,6 +8,8 @@ require 'haml'
 require 'markaby'
 require 'markaby/sinatra'
 
+set :port, 4567
+
 BEHAVIOUR = {
   :debug => false,
   :verbose => true
