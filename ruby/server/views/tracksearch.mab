@@ -1,0 +1,15 @@
+h1 "Track Search"
+
+p.results do
+  span "Tracks: "
+  span.query "#{query}"
+end
+
+ol do |ol|
+  results.each do |result|
+    ol.li {
+      a result[:label], :href => "/track/" + result[:track]
+      span "(Track #{result[:num]} of #{result[:eventName]})"
+    }
+  end
+end
