@@ -1,23 +1,55 @@
-xhtml_rdfa do
+html do
   head {
-    title pageTitle
-    link :rel => "stylesheet", :href => "/css/style.css"
+    title pageTitle    
+    meta :name => "viewport", :content => "width=device-width, initial-scale=1.0"
+    link :rel => "stylesheet", :href => "/css/bootstrap.css"
   }    
-  body do
-    div.content! do
-      div.head! do
-        a :href => "/" do 
-          img.logo! :src => "/band.png"
+  body :style => "padding-top: 50px" do
+    div :class => "navbar navbar-inverse navbar-fixed-top" do
+      div :class => "navbar-header" do
+        button :type => "button", :class => "navbar-toggle" do # :data-toggle => "collapse" :data-target => ".navbar-collapse"
+          span :class => "icon-bar"
+          span :class => "icon-bar"
+          span :class => "icon-bar"
         end
+        a "etree.linkedmusic.org", :class => "navbar-brand", :href => "/"
       end
-      yield 
-    end
-    div.footer! do
-      p do
-        span "Powered by "
-        a "linkedmusic.org", :href => "http://etree.linkedmusic.org" 
+      div :class => "collapse navbar-collapse" do
+        ul :class => "nav navbar-nav" do
+          li :class => "active" do
+            a "About", :href => "/"
+          end
+          li do
+            a "Artists", :href => "/artists"
+          end
+          li do
+            a "Locations", :href => "/locations"
+          end
+          li do
+            a "Venues", :href => "/venues"
+          end
+        end
       end
     end
 
+    div :class => 'jumbotron text-center' do
+      a :href => "/" do 
+        img.logo! :src => "/band.png", :width => "100"
+      end
+      h2 "etree.linkedmusic.org" 
+    end
+    
+    div.container do
+      yield 
+      div.row do
+        hr
+        div :class => 'col-md-12 text-center' do
+          p do
+            span "Powered by "
+            a "linkedmusic.org", :href => "http://etree.linkedmusic.org" 
+          end
+        end
+      end
+    end
   end
 end

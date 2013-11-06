@@ -1,14 +1,14 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/ruby
 
 require 'rubygems'
 require 'getopt/std'
 require 'sinatra'
 require 'sparql/client'
-require 'haml'
+#require 'haml'
 require 'markaby'
 require 'markaby/sinatra'
 
-set :port, 4567
+set :port, 31415
 
 BEHAVIOUR = {
   :debug => false,
@@ -16,16 +16,24 @@ BEHAVIOUR = {
 }
 
 #ENDPOINT="http://localhost:3030/etree/sparql"
-#ENDPOINT="http://etree.linkedmusic.org/sparql"
-ENDPOINT="http://linkedmusic.oerc.ox.ac.uk:3030/etree/sparql"
+ENDPOINT="http://etree.linkedmusic.org/sparql"
+#ENDPOINT="http://linkedmusic.oerc.ox.ac.uk:3030/etree/sparql"
 ETREE="http://etree.linkedmusic.org/"
 MBENDPOINT="http://dbtune.org/musicbrainz/sparql"
+
+QUERYCACHE = {}
+TAGSCACHE = nil
+ARTISTSCACHE = nil
+LOCATIONSCACHE = nil
+VENUESCACHE = nil
 
 $sparql = SPARQL::Client.new(ENDPOINT)
 $mbsparql = SPARQL::Client.new(MBENDPOINT)
 
 get '/' do
-squery = <<END
+  results = TAGSCACHE
+  if results == nil then
+    squery = <<END
 PREFIX etree:<http://etree.linkedmusic.org/vocab/>
 PREFIX mo:<http://purl.org/ontology/mo/>
 PREFIX event:<http://purl.org/NET/c4dm/event.owl#>
@@ -41,17 +49,29 @@ SELECT DISTINCT ?tag WHERE
 ?art etree:mbTag ?tag.
 } ORDER BY ?tag
 END
-
-  spqresults = $sparql.query( squery )
-  results = []
-  spqresults.each do |result|
-    results << {:tn => result[:tag]}
+    
+    spqresults = $sparql.query( squery )
+    results = []
+    spqresults.each do |result|
+      results << {:tn => result[:tag]}
+    end
+    TAGSCACHE = results
   end
   markaby :index, :locals => {:pageTitle => "Home: etree", :tags => results}
 end # '/'
 
+def URIEncode(uri)
+  return URI.encode(uri.to_s(),"/")
+end
+
 def simpleQuery(query, queryType, type) 
-  squery = <<END
+  results = nil
+  hash = query+queryType+type
+  if QUERYCACHE.has_key?(hash) then
+    puts "Retrieving from cache"
+    results = QUERYCACHE[hash]
+  else
+    squery = <<END
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
 PREFIX geo:<http://www.geonames.org/ontology#>
 PREFIX mo:<http://purl.org/ontology/mo/>
@@ -62,8 +82,10 @@ SELECT ?thing ?label WHERE {
 FILTER regex(?label, "#{query}", "i")
 } ORDER BY ?label
 END
-  puts squery if BEHAVIOUR[:verbose]
-  results = $sparql.query( squery )
+    puts squery if BEHAVIOUR[:verbose]
+    results = $sparql.query( squery )
+    QUERYCACHE[hash] = results
+  end
   puts results.inspect if BEHAVIOUR[:verbose]
   markaby :search, :locals => {:pageTitle => "Search: #{query}", :query => query, :type => type, :results => results}
 end
@@ -76,10 +98,19 @@ PREFIX mo:<http://purl.org/ontology/mo/>
 PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX etree:<http://etree.linkedmusic.org/vocab/>
 SELECT ?thing (concat(?n, ", ", ?c) as ?label) WHERE {
+{
 ?thing geo:name ?n.
 ?thing geo:countryCode ?c.
 FILTER regex(?n, "#{query}", "i")
+} 
+UNION
+{
+?thing geo:name ?n.
+?thing geo:countryCode ?c.
+FILTER regex(?c, "#{query}", "i")
+}
 } ORDER BY ?label
+
 END
   puts squery if BEHAVIOUR[:verbose]
   results = $sparql.query( squery )
@@ -162,7 +193,7 @@ get '/search' do
 end
   
 get '/artist/*' do
-  artistID = params[:splat]
+  artistID = params[:splat][0]
   query = <<END
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
 PREFIX mo:<http://purl.org/ontology/mo/>
@@ -187,7 +218,7 @@ END
 end
   
 get '/track/*' do
-  trackID = params[:splat]
+  trackID = params[:splat][0]
   query = <<END
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
 PREFIX mo:<http://purl.org/ontology/mo/>
@@ -208,7 +239,7 @@ end
 
 get '/event/*' do
   puts params.inspect if BEHAVIOUR[:verbose]
-  perfID = params[:splat]
+  perfID = params[:splat][0]
   puts perfID if BEHAVIOUR[:verbose]
   query = <<END
 PREFIX etree:<http://etree.linkedmusic.org/vocab/>
@@ -220,12 +251,13 @@ PREFIX timeline:<http://purl.org/NET/c4dm/timeline.owl#>
 PREFIX geo:<http://www.geonames.org/ontology#>
 PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
-SELECT DISTINCT ?performance ?art ?artist ?date ?uploader ?geo ?location ?country ?lastfm ?lastfmName
+SELECT DISTINCT ?performance ?art ?artist ?date ?description ?uploader ?geo ?location ?country ?lastfm ?lastfmName
 {
 <#{perfID}> mo:performer ?art;
   etree:uploader ?uploader;
   event:place ?venue;
   event:time ?time;
+  etree:description ?description;
   skos:prefLabel ?performance.
 
 ?art skos:prefLabel ?artist.
@@ -291,7 +323,12 @@ end
 
 get '/playlist/*' do
   puts params.inspect if BEHAVIOUR[:verbose]
-  perfID = params[:splat]
+  perfID = params[:splat][0]
+  # Horrible hack. Some issue with ruby/sinatra losing //
+  if !perfID.match("http://") then
+    perfID = perfID.sub!("http:/","http://")
+  end
+  # end Horribla hack
   puts perfID if BEHAVIOUR[:verbose]
   query = <<END
 PREFIX etree:<http://etree.linkedmusic.org/vocab/>
@@ -328,12 +365,16 @@ END
   results.each do |result|
     if (result[:audio].to_s.end_with?("mp3")) then
       if !done.include?(result[:trackNumber].to_i) then
+        trackName = result[:trackName].to_s
+        if trackName.empty? then
+          trackName = "??"
+        end
         xml<< <<END    
     <track>
       <location>#{result[:audio]}</location>
       <creator>#{result[:artist]}</creator>
       <album>#{result[:performance]}</album>
-      <title>#{result[:trackName]}</title>
+      <title>#{trackName}</title>
       <image>/music.png</image>
     </track>
 END
@@ -351,7 +392,7 @@ END
 end
 
 get '/lastfm/*' do
-  lastFMID = params[:splat]
+  lastFMID = params[:splat][0]
   query = <<END
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
 PREFIX mo:<http://purl.org/ontology/mo/>
@@ -384,7 +425,7 @@ END
 end
 
 get '/geo/*' do
-  geoID = params[:splat]
+  geoID = params[:splat][0]
   query = <<END
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
 PREFIX mo:<http://purl.org/ontology/mo/>
@@ -421,7 +462,7 @@ END
 end
 
 get '/key/*' do
-  key = params[:splat]
+  key = params[:splat][0]
   query = <<END
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
 PREFIX mo:<http://purl.org/ontology/mo/>
@@ -438,4 +479,72 @@ END
   puts query if BEHAVIOUR[:verbose]
   results = $sparql.query( query )
   markaby :search, :locals => {:pageTitle => key, :query => key, :type => "event", :results => results}
+end
+
+get '/artists' do
+  results = ARTISTSCACHE
+  if results == nil then
+    squery = <<END
+PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
+PREFIX geo:<http://www.geonames.org/ontology#>
+PREFIX mo:<http://purl.org/ontology/mo/>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX etree:<http://etree.linkedmusic.org/vocab/>
+SELECT ?thing ?label WHERE {
+?thing rdf:type mo:MusicArtist.
+?thing skos:prefLabel ?label.
+} ORDER BY ?label
+END
+    puts squery if BEHAVIOUR[:verbose]
+    results = $sparql.query( squery )
+    ARTISTSCACHE = results
+  end
+  puts results.inspect if BEHAVIOUR[:verbose]
+  markaby :things, :locals => {:pageTitle => "Artists", :type => "artist", :typeLabel => "Artists", :results => results}
+end
+
+get '/locations' do
+  results = LOCATIONSCACHE
+  if results == nil then
+    squery = <<END
+PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
+PREFIX geo:<http://www.geonames.org/ontology#>
+PREFIX mo:<http://purl.org/ontology/mo/>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX etree:<http://etree.linkedmusic.org/vocab/>
+SELECT DISTINCT ?thing (concat(?n, ", ", ?c) as ?label) WHERE {
+?thing geo:name ?n.
+?thing geo:countryCode ?c.
+} ORDER BY ?label
+END
+    puts squery if BEHAVIOUR[:verbose]
+    results = $sparql.query( squery )
+    LOCATIONSCACHE = results
+  end
+  puts results.inspect if BEHAVIOUR[:verbose]
+  markaby :things, :locals => {:pageTitle => "Locations", :type => "geo", :typeLabel => "Locations", :results => results}
+end
+
+get '/venues' do
+  results = VENUESCACHE
+  if results == nil then
+    squery = <<END
+PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
+PREFIX geo:<http://www.geonames.org/ontology#>
+PREFIX mo:<http://purl.org/ontology/mo/>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sim:<http://purl.org/ontology/similarity/>
+PREFIX etree:<http://etree.linkedmusic.org/vocab/>
+SELECT DISTINCT ?thing ?label WHERE {
+?sim sim:object ?thing.
+?sim sim:method etree:simpleLastfmMatch.
+?thing skos:prefLabel ?label.
+} ORDER BY ?label
+END
+    puts squery if BEHAVIOUR[:verbose]
+    results = $sparql.query( squery )
+    VENUESCACHE = results
+  end
+  puts results.inspect if BEHAVIOUR[:verbose]
+  markaby :things, :locals => {:pageTitle => "Venues", :type => "lastfm", :typeLabel => "Last FM Venues", :results => results}
 end

@@ -1,14 +1,20 @@
-h1 "Search"
+div.container do
+  div.row do
+    div.send(:'col-md-12') do
+      h1 "Search"
 
-p.results do
-  span "Search results for "
-  span.query "#{query}"
-end
+      p.results do
+        span "Search results for "
+        span.query "#{query}"
+      end
 
-ul do |ul|
-  results.each do |result|
-    ul.li {
-      a result[:label], :href => "/#{type}/" + result[:thing]
-    }
+      ul do |ul|
+        results.each do |result|
+          ul.li {
+            a result[:label], :href => "/#{type}/" + URIEncode(result[:thing])
+          }
+        end
+      end
+    end
   end
 end

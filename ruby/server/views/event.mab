@@ -1,81 +1,86 @@
-results.each do |result|
-  h1 result[:performance]
-  p do
-  a id, :href => id
-  end
-
-
-   # div.player! do 
-   #   object :type => "application/x-shockwave-flash", :data=> "/audio-player/dewplayer/dewplayer-playlist.swf", :width => "240",
-   #   :height => "400", :id => "dewplayer", :name => "dewplayer" do
-   #     param :name => "wmode", :value =>"transparent"
-   #     param :name => "movie", :value => "dewplayer-playlist.swf"
-   #        param :name => "flashvars", :value=> "mp3=http://ia600201.us.archive.org/17/items/mogwai1999-10-16.flac16/mogwai1999-10-16d1t04_vbr.mp3|http://ia600201.us.archive.org/17/items/mogwai1999-10-16.flac16/mogwai1999-10-16d1t02_vbr.mp3" 
-   #     param :name => "flashvars", :value=> "xml=http://localhost:4567/playlist/#{id}" 
-   #        param :name => "flashvars", :value=> "xml=/audio-player/dewplayer/playlist2.xml" 
-   #   end
-   # end
-
-  dl do |dl|
-    dt "artist"
-    dd do
-      a result[:artist], :href => "/artist/" + result[:art].to_s
-    end
-    dt "date"
-    dd result[:date]
-    dt "uploader"
-    dd result[:uploader]
-    dt "location"
-    dd do
-      puts "|#{result[:lastfmName].inspect}|"
-      if (result[:lastfmName]) then
-        a result[:lastfmName], :href => "/lastfm/" + result[:lastfm] 
-      end
-      if (result[:lastfmName] && result[:location]) then
-        span ", "
-      end
-      if (result[:location]) then
-        a result[:location], :href => "/geo/" + result[:geo]
+div.container do
+    results.each do |result|
+    div.row do
+      div.send(:'col-md-12') do
+        h1 result[:performance]
+        p do
+          a id, :href => id
+        end
       end
     end
-    dt "country"
-    dd result[:country]
-    dt "keywords"
-    dd do
-      ul.keywords do 
-        keys.each do |key|
-          li do
-            a key[:keyword].to_s, :href => "/key/" + key[:keyword].to_s
+    div.row do
+      div.send(:'col-md-4') do
+        dl do |dl|
+          dt "artist"
+          dd do
+            a result[:artist], :href => "/artist/" + URIEncode(result[:art])
+          end
+          dt "date"
+          dd result[:date]
+          dt "uploader"
+          dd result[:uploader]
+          dt "location"
+          dd do
+            puts "|#{result[:lastfmName].inspect}|"
+            if (result[:lastfmName]) then
+              a result[:lastfmName], :href => "/lastfm/" + URIEncode(result[:lastfm])
+            end
+            if (result[:lastfmName] && result[:location]) then
+              span ", "
+            end
+            if (result[:location]) then
+              a result[:location], :href => "/geo/" + URIEncode(result[:geo])
+            end
+          end
+          dt "country"
+          dd result[:country]
+          dt "keywords"
+          dd do
+            if keys.size > 0 then
+              ul.keywords do 
+                keys.each do |key|
+                  li do
+                    a key[:keyword].to_s, :href => "/key/" + key[:keyword].to_s
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+      div.send(:'col-md-4') do
+        dl do |dl|
+          dt "tracks"
+          dd do 
+            if tracks.size > 0 then
+              ol.tracks do
+                tracks.each do |track|
+                  li do 
+                    a track[:trackName], :href => track[:track].to_s
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+      div.send(:'col-md-4') do
+        div.xspf do 
+          object :type => "application/x-shockwave-flash",
+          #    :data => "/audio-player/xspf_player/xspf_player.swf?playlist_url=http://localhost:4567/playlist/#{id}&autoplay=0&autoload=1&repeat_playlist=1&shuffle=1&bg_color=454545&txt_color=E6E6E6&volume_level=80", 
+          :width => "400", :height => "200" do
+            p.sorry "This jukebox player requires Flash. You may be able to play audio files by following the track links above."
+            param :name => "allownetworking", :value => "internal"
+            param :name => "movie", :value => "/audio-player/xspf_player/xspf_player.swf?playlist_url=http://localhost:31415/playlist/#{URIEncode(id)}&autoplay=0&autoload=1&repeat_playlist=1&shuffle=0&bg_color=454545&txt_color=E6E6E6&volume_level=80&album=off"
+            param :name => "allowScriptAccess", :value => "never"
+            param :name => "enableJSURL", :value => "false"
+            param :name => "enableHREF", :value => "false"
+            param :name => "saveEmbedTags", :value => "true"
+            param :name => "quality", :value => "high"
+            param :name => "wmode", :value => "transparent"
           end
         end
       end
     end
-    dt "tracks"
-    dd do 
-      ol.tracks do
-        tracks.each do |track|
-          li do 
-            a track[:trackName], :href => track[:track].to_s
-          end
-        end
-      end
-    end
-  end
-
-  div.xspf do 
-    object :type => "application/x-shockwave-flash",
-#    :data => "/audio-player/xspf_player/xspf_player.swf?playlist_url=http://localhost:4567/playlist/#{id}&autoplay=0&autoload=1&repeat_playlist=1&shuffle=1&bg_color=454545&txt_color=E6E6E6&volume_level=80", 
-    :width => "800", :height => "200" do
-      p.sorry "This jukebox player requires Flash. You may be able to play audio files by following the track links above."
-      param :name => "allownetworking", :value => "internal"
-      param :name => "movie", :value => "/audio-player/xspf_player/xspf_player.swf?playlist_url=http://localhost:4567/playlist/#{id}&autoplay=0&autoload=1&repeat_playlist=1&shuffle=0&bg_color=454545&txt_color=E6E6E6&volume_level=80&album=off"
-      param :name => "allowScriptAccess", :value => "never"
-      param :name => "enableJSURL", :value => "false"
-      param :name => "enableHREF", :value => "false"
-      param :name => "saveEmbedTags", :value => "true"
-      param :name => "quality", :value => "high"
-      param :name => "wmode", :value => "transparent"
-    end
-  end
-
+  end 
 end
