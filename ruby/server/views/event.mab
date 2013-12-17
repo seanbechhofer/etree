@@ -17,8 +17,22 @@ div.container do
           end
           dt "date"
           dd result[:date]
+          # if (result[:artMB]) then          
+          #   dt "setlist"
+          #   mb = result[:artMB].to_s
+          #   mbID = mb.sub("http://musicbrainz.org/artist/","").sub("#_","")
+          #   d = Date.parse(result[:date].to_s)
+          #   setlist = "http://api.setlist.fm/rest/0.1/search/setlists?artistMbid=#{mbID}&date=#{d.strftime('%d-%m-%Y')}"
+          #   dd do
+          #     a "setlist.fm", :href => setlist
+          #   end 
+          # end
           dt "uploader"
           dd result[:uploader]
+          dt "etree"
+          dd do
+            a result[:id], :href => "http://archive.org/details/" + result[:id].to_s
+          end
           dt "location"
           dd do
             puts "|#{result[:lastfmName].inspect}|"
