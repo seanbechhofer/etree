@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/opt/local/bin/ruby
 
 require 'rubygems'
 require 'getopt/std'
@@ -9,6 +9,10 @@ require 'markaby'
 require 'markaby/sinatra'
 
 set :port, 31415
+# Liston to any host
+set :bind, '0.0.0.0'
+# Dealing with //
+set :protection, :except => :path_traversal
 
 BEHAVIOUR = {
   :debug => false,
@@ -198,10 +202,16 @@ get '/artist/*' do
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
 PREFIX mo:<http://purl.org/ontology/mo/>
 PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-SELECT ?event ?eventName WHERE {
+PREFIX event:<http://purl.org/NET/c4dm/event.owl#>
+PREFIX timeline:<http://purl.org/NET/c4dm/timeline.owl#>
+
+SELECT ?event ?eventName ?date WHERE {
 <#{artistID}> mo:performed ?event.
 ?event skos:prefLabel ?eventName.
-}
+?event event:time ?time.
+?time timeline:beginsAtDateTime ?date.
+
+} ORDER BY DESC(?date)
 END
   results = $sparql.query( query )
   puts results.inspect if BEHAVIOUR[:verbose]
@@ -251,10 +261,11 @@ PREFIX timeline:<http://purl.org/NET/c4dm/timeline.owl#>
 PREFIX geo:<http://www.geonames.org/ontology#>
 PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
-SELECT DISTINCT ?performance ?art ?artist ?date ?description ?uploader ?geo ?location ?country ?lastfm ?lastfmName
+SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?uploader ?geo ?location ?country ?lastfm ?lastfmName
 {
 <#{perfID}> mo:performer ?art;
   etree:uploader ?uploader;
+  etree:id ?id;
   event:place ?venue;
   event:time ?time;
   etree:description ?description;
@@ -278,6 +289,11 @@ OPTIONAL {
 ?lastfm skos:prefLabel ?lastfmName.
 }
 
+OPTIONAL {
+?sim3 sim:subject ?art.
+?sim3 sim:object ?artMB.
+?sim3 sim:method etree:simpleMusicBrainzMatch.
+}
 
 }
 END
