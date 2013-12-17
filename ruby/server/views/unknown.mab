@@ -1,0 +1,9 @@
+div.container do
+  div.row do
+    div.send(:'col-md-12') do
+      h1 "Unknown"
+      
+      p "Unknown Search Type!"
+    end
+  end
+end
