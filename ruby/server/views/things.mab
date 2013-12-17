@@ -1,0 +1,16 @@
+# Expects typeLabel, type and results being things
+div.container do
+  div.row do
+    div.send(:'col-md-12') do
+      h1 "#{typeLabel}"
+
+      ol do |l|
+        results.each do |result|
+          l.li {
+            a result[:label], :href => "/#{type}/" + URIEncode(result[:thing])
+          }
+        end
+      end
+    end
+  end
+end
