@@ -9,7 +9,7 @@ require 'markaby'
 require 'markaby/sinatra'
 
 set :port, 31415
-# Liston to any host
+# Listen to any host
 set :bind, '0.0.0.0'
 # Dealing with //
 set :protection, :except => :path_traversal
