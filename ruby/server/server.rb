@@ -7,6 +7,7 @@ require 'sparql/client'
 #require 'haml'
 require 'markaby'
 require 'markaby/sinatra'
+require 'json'
 
 set :port, 31415
 # Listen to any host
@@ -572,3 +573,29 @@ END
   puts results.inspect if BEHAVIOUR[:verbose]
   markaby :things, :locals => {:pageTitle => "Venues", :type => "lastfm", :typeLabel => "Last FM Venues", :results => results}
 end
+
+get '/year-summary' do
+# Bit of a hack this. Would be better to directly query the sparql from the page. 
+# Returns basic information about numbers of performances per year.
+  squery = <<END
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX etree: <http://etree.linkedmusic.org/vocab/>
+SELECT ?year (COUNT (?perf) AS ?performances) 
+WHERE { 
+  SELECT DISTINCT ?perf (YEAR(xsd:date(?date)) AS ?year) 
+  WHERE { 
+    ?perf rdf:type etree:Concert. 
+    ?perf etree:date ?date. 
+  } 
+} GROUP BY ?year 
+ORDER BY ?year
+END
+  spqresults = $sparql.query( squery )
+  stuff = []
+  spqresults.each do |result|
+    stuff << {"year" => result[:year].to_s, "performances" => result[:performances].to_i}
+  end
+  stuff.to_json
+end
+

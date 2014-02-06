@@ -3,7 +3,11 @@ html do
     title pageTitle    
     meta :name => "viewport", :content => "width=device-width, initial-scale=1.0"
     link :rel => "stylesheet", :href => "/css/bootstrap.css"
-  }    
+    script :type => "text/javascript", :src => "/jquery.js" do
+    end	   
+    script :type => "text/javascript", :src => "https://www.google.com/jsapi" do
+    end	   
+  }
   body :style => "padding-top: 50px" do
     div :class => "navbar navbar-inverse navbar-fixed-top" do
       div :class => "navbar-header" do

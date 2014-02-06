@@ -1,5 +1,42 @@
-div.container do
+script do 
+  <<END
+     // Load the Visualization API and the piechart package.
+     google.load('visualization', '1.0', {'packages':['corechart']});
+     
+     // Set a callback to run when the Google Visualization API is loaded.
+     google.setOnLoadCallback(getData);
+     
+     function getData() {
+       var data = $.getJSON("/year-summary",
+			    {},
+			    function(data) {
+	   console.log('data = ', data);
+	   
+	   dataTable = new google.visualization.DataTable();
+           dataTable.addColumn('string', 'Year');
+           dataTable.addColumn('number', 'Events');
+	   for (var i=0; i< data.length; i++) {
+	     if (data[i].year) {			  
+	     dataTable.addRow([data[i].year,parseInt(data[i].performances)]);
+             }
+	   }			  
+	   
+	   // Set chart options
+           var columnChartOptions = {'title':'Performances',
+			       'width':1000,
+			       'height':400};
+				  
+           var column = new google.visualization.ColumnChart(document.getElementById('column'));
+	   column.draw(dataTable, columnChartOptions);
+	 });
+       
+     }
 
+END
+end
+
+div.container do
+  
   div.row do # Search
     div :class => "col-md-12" do 
       h1 "Search"
@@ -55,13 +92,23 @@ div.container do
       end
     end 
   end # Search
-
+  
   div.row do # About
     div.send(:'col-md-12') do 
       h1 "About"
       div do
         p "This demo illustrates query over our Linked Data conversion of the Internet Archive's Live Music Archive (LMA) metadata. The LMA contains some 100,000 live recorded performances, recorded with the consent of the artists. Metadata describing the event is included, largely as free text."
-        
+      end
+      div :class => "text-center success" do
+        div :id => "column" do
+        end
+        div do
+          span do
+            strong "Performances by Year"
+          end
+        end
+      end
+      div do
         p "Metadata conversion was done by downloading the XML metadata descriptions, converting this into an RDF representation, then using some simple techniques to try and align:"
         ul do
           li "Artists with Artists in MusicBrainz;"
