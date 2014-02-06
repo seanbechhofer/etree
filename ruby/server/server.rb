@@ -217,14 +217,22 @@ END
   puts results.inspect if BEHAVIOUR[:verbose]
   query = <<END
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
+PREFIX sim:<http://purl.org/ontology/similarity/>
+PREFIX etree:<http://etree.linkedmusic.org/vocab/>
 
-SELECT DISTINCT ?name WHERE {
+SELECT DISTINCT ?name ?artMB WHERE {
 <#{artistID}> skos:prefLabel ?name.
+OPTIONAL {
+?sim sim:subject <#{artistID}>.
+?sim sim:object ?artMB.
+?sim sim:method etree:simpleMusicBrainzMatch.
+}
 } 
 END
   nameResults = $sparql.query( query )
   artistName = nameResults.first[:name]
-  markaby :artist, :locals => {:pageTitle => artistName, :query => artistID, :name => artistName, :results => results}
+  artistMB = nameResults.first[:artMB]
+  markaby :artist, :locals => {:pageTitle => artistName, :query => artistID, :name => artistName, :mb => artistMB, :results => results}
 end
   
 get '/track/*' do
@@ -437,7 +445,7 @@ SELECT DISTINCT ?name WHERE {
 END
   nameResults = $sparql.query( query )
   venueName = nameResults.first[:name]
-  markaby :place, :locals => {:pageTitle => venueName, :query => lastFMID, :name => venueName, :results => results}
+  markaby :lastfm, :locals => {:pageTitle => venueName, :query => lastFMID, :name => venueName, :results => results}
 end
 
 get '/geo/*' do
@@ -474,7 +482,7 @@ SELECT DISTINCT ?name WHERE {
 END
   nameResults = $sparql.query( query )
   venueName = nameResults.first[:name]
-  markaby :place, :locals => {:pageTitle => venueName, :query => geoID, :name => venueName, :results => results}
+  markaby :geo, :locals => {:pageTitle => venueName, :query => geoID, :name => venueName, :results => results}
 end
 
 get '/key/*' do

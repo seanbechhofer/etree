@@ -3,9 +3,29 @@ div.container do
     div.send(:'col-md-12') do
       h1 name
       div do
-        p do
-          a query, :href => query
+        table :class => "table table-striped table-condensed" do
+          tr do
+            td do
+              strong "Etree:" 
+            end
+            td do
+              a query, :href => query
+            end
+          end
+          if mb then
+            tr do
+              td do
+                strong "Music Brainz:" 
+              end
+              td do
+                a mb, :href => mb
+              end
+            end
+          end
         end
+      end
+      h2 "Performances"
+      div do
         if results.size > 0 then
           ol do |list|	  
             results.each do |result|
