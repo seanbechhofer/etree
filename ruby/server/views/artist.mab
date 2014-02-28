@@ -1,3 +1,42 @@
+script do 
+  <<END
+     // Load the Visualization API and the piechart package.
+     google.load('visualization', '1.0', {'packages':['corechart']});
+     
+     // Set a callback to run when the Google Visualization API is loaded.
+     google.setOnLoadCallback(doChart);
+     
+     function doChart() {
+           $.getJSON("/years/#{query}",
+                                 {},
+                                 function(data) {
+           console.log('data = ', data);
+
+           var years = data["year.summary"]
+	   yearTable = new google.visualization.DataTable();
+           yearTable.addColumn('string', 'Year');
+           yearTable.addColumn('number', 'Events');
+	   for (var i=0; i< years.length; i++) {
+	     if (years[i].year) {			  
+	     yearTable.addRow([years[i].year,parseInt(years[i].performances)]);
+             }
+	   }			  
+
+	   // Set chart options
+           var columnChartOptions = {title:'Performances By Year',
+			       height:400,
+                               bar: {groupWidth: "95%"},
+                               hAxis:{slantedText:true, slantedTextAngle:45},
+           };
+				  
+           var column = new google.visualization.ColumnChart(document.getElementById('years'));
+	   column.draw(yearTable, columnChartOptions);
+	 });
+     }
+END
+end
+
+
 div.container do
   div.row do
     div.send(:'col-md-12') do
@@ -22,7 +61,31 @@ div.container do
               end
             end
           end
+          if opMB then
+            tr do
+              td do
+                strong "Music Brainz (OP):" 
+              end
+              td do
+                a opMB, :href => opMB
+              end
+            end
+          end
+          if opLFM then
+            tr do
+              td do
+                strong "last.fm (OP):" 
+              end
+              td do
+                a opLFM, :href => opLFM
+              end
+            end
+          end
         end
+      end
+      h2 "Year summary"
+      div :id => "years" do
+        p "Loading....."
       end
       h2 "Performances"
       div do

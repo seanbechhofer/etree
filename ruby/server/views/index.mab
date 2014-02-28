@@ -7,27 +7,29 @@ script do
      google.setOnLoadCallback(getData);
      
      function getData() {
-       var data = $.getJSON("/year-summary",
-			    {},
-			    function(data) {
-	   console.log('data = ', data);
-	   
-	   dataTable = new google.visualization.DataTable();
-           dataTable.addColumn('string', 'Year');
-           dataTable.addColumn('number', 'Events');
-	   for (var i=0; i< data.length; i++) {
-	     if (data[i].year) {			  
-	     dataTable.addRow([data[i].year,parseInt(data[i].performances)]);
+           var data = $.getJSON("/years/",
+                                 {},
+                                 function(data) {
+           console.log('data = ', data);
+           var years = data["year.summary"]
+	   yearTable = new google.visualization.DataTable();
+           yearTable.addColumn('string', 'Year');
+           yearTable.addColumn('number', 'Events');
+	   for (var i=0; i< years.length; i++) {
+	     if (years[i].year) {			  
+	     yearTable.addRow([years[i].year,parseInt(years[i].performances)]);
              }
 	   }			  
-	   
+
 	   // Set chart options
-           var columnChartOptions = {'title':'Performances',
-			       'width':1000,
-			       'height':400};
+           var columnChartOptions = {title:'Performances By Year',
+			       height:400,
+                               hAxis:{slantedText:true, slantedTextAngle:45},
+                               bar: {groupWidth: "95%"},
+           };
 				  
-           var column = new google.visualization.ColumnChart(document.getElementById('column'));
-	   column.draw(dataTable, columnChartOptions);
+           var column = new google.visualization.ColumnChart(document.getElementById('years'));
+	   column.draw(yearTable, columnChartOptions);
 	 });
        
      }
@@ -99,15 +101,18 @@ div.container do
       div do
         p "This demo illustrates query over our Linked Data conversion of the Internet Archive's Live Music Archive (LMA) metadata. The LMA contains some 100,000 live recorded performances, recorded with the consent of the artists. Metadata describing the event is included, largely as free text."
       end
-      div :class => "text-center success" do
-        div :id => "column" do
+      h2 "Overview Statistics" 
+      div.send(:'col-md-12') do
+        div :id => "years" do
+          p "Loading....."
         end
-        div do
-          span do
-            strong "Performances by Year"
-          end
-        end
+        # div do
+        #   span do
+        #     strong "Performances by Year"
+        #   end
+        # end
       end
+      h2 "Conversion"
       div do
         p "Metadata conversion was done by downloading the XML metadata descriptions, converting this into an RDF representation, then using some simple techniques to try and align:"
         ul do
