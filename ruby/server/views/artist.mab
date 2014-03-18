@@ -48,7 +48,10 @@ div.container do
               strong "Etree:" 
             end
             td do
-              a query, :href => query
+#             a query, :href => query
+              a :href => query do
+                button query, :class => "btn btn-primary" 
+              end
             end
           end
           if mb then
@@ -57,7 +60,10 @@ div.container do
                 strong "Music Brainz:" 
               end
               td do
-                a mb, :href => mb
+#                a mb, :href => mb
+                a :href => mb do
+                  button mb, :class => "btn btn-primary"
+                end
               end
             end
           end
@@ -67,7 +73,10 @@ div.container do
                 strong "Music Brainz (OP):" 
               end
               td do
-                a opMB, :href => opMB
+#                a opMB, :href => opMB
+                a :href => opMB do
+                  button opMB, :class => "btn btn-primary"
+                end
               end
             end
           end
@@ -77,7 +86,10 @@ div.container do
                 strong "last.fm (OP):" 
               end
               td do
-                a opLFM, :href => opLFM
+#                a opLFM, :href => opLFM
+                a :href => opLFM do
+                  button opLFM, :class => "btn btn-primary"
+                end
               end
             end
           end

@@ -50,15 +50,22 @@ div.container do
           dd result[:country]
           dt "keywords"
           dd do
-            if keys.size > 0 then
-              ul.keywords do 
-                keys.each do |key|
-                  li do
-                    a key[:keyword].to_s, :href => "/key/" + key[:keyword].to_s
-                  end
-                end
+            keys.each do |key|
+              a :href => "/key/" + key[:keyword].to_s do
+                button key[:keyword].to_s, :class => "btn btn-primary"
               end
+              span " "
             end
+            
+            # if keys.size > 0 then
+            #   ul.keywords do 
+            #     keys.each do |key|
+            #       li do
+            #         a key[:keyword].to_s, :href => "/key/" + key[:keyword].to_s
+            #       end
+            #     end
+            #   end
+            # end
           end
         end
       end

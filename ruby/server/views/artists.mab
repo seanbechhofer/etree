@@ -1,3 +1,15 @@
+def badge(result) 
+  val = result.to_d
+  if val == 1.0 then
+    clazz = "badge alert-success"
+  elsif val > 0.5 then
+    clazz = "badge alert-warning"
+  else
+    clazz = "badge alert-danger"
+  end
+  return {:v => val, :c => clazz}
+end
+
 div.container do
   div.row do
     div.send(:'col-md-12') do
@@ -5,8 +17,8 @@ div.container do
       div do
         table :class => "table table-striped table-condensed" do
           tr do
-            th "Artist", :style => "width:'50%'"
-            th "Mappings", :style => "width:'50%'" 
+            th "Artist", :style => "width:50%"
+            th "Mappings", :style => "width:50%" 
           end
           results.each do |result|
             tr do
@@ -14,34 +26,45 @@ div.container do
                 a result[:label], :href => "/#{type}/" + URIEncode(result[:thing])
               end
               td do
-                table do 
+                table :style => "width:100%" do 
                   if result[:mb] 
                     tr do
-                      td do
+                      td :style => "width:80%" do
                         a result[:mb], :href => result[:mb]   
                       end
-                      td do
-                        span "  (%.2f)" % result[:mbw].to_d, :class => "text-muted"
+                      td :style => "width:10%" do
+                        b = badge(result[:mbw])
+                        span "%.2f" % b[:v], :class => b[:c]
+                      end
+                      td :style => "width:10%" do
                       end
                     end
                   end
                   if result[:opmb] 
                     tr do
-                      td do
+                      td :style => "width:80%" do
                         a result[:opmb], :href => result[:opmb]
                       end
-                      td do
-                        span "  (%.2f) OP" % result[:opmbw].to_d, :class => "text-muted"
+                      td :style => "width:10%" do                     
+                        b = badge(result[:opmbw])
+                        span "%.2f" % b[:v], :class => b[:c]
+                      end
+                      td :style => "width:10%" do
+                        span "OP", :class => "badge alert-info"
                       end
                     end
                   end
                   if result[:oplfm] 
                     tr do 
-                      td do
+                      td :style => "width:80%" do
                         a result[:oplfm], :href => result[:oplfm]
                       end
-                      td do
-                        span "  (%.2f) OP" % result[:oplfmw].to_d, :class => "text-muted"
+                      td :style => "width:10%" do
+                        b = badge(result[:oplfmw])
+                        span "%.2f" % b[:v], :class => b[:c]
+                      end
+                      td :style => "width:10%" do
+                        span "OP", :class => "badge alert-info"
                       end
                     end
                   end
