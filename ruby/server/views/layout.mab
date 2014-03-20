@@ -5,6 +5,8 @@ html do
     link :rel => "stylesheet", :href => "/css/bootstrap.css"
     script :type => "text/javascript", :src => "/jquery.js" do
     end	   
+    script :type => "text/javascript", :src => "jquery.tablesorter.min.js" do
+    end
     script :type => "text/javascript", :src => "https://www.google.com/jsapi" do
     end	   
   }

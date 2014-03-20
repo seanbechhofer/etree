@@ -39,6 +39,7 @@ PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX geo:<http://www.geonames.org/ontology#>
 PREFIX sim:<http://purl.org/ontology/similarity/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
 END
 
 QUERYCACHE = {}
@@ -260,7 +261,7 @@ get '/event/*' do
   perfID = params[:splat][0]
   puts perfID if BEHAVIOUR[:verbose]
   query = PREFIXES+<<END
-SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?uploader ?geo ?location ?country ?lastfm ?lastfmName
+SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?notes ?uploader ?geo ?location ?country ?lastfm ?lastfmName
 {
 <#{perfID}> mo:performer ?art;
   etree:uploader ?uploader;
@@ -268,7 +269,8 @@ SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?uploade
   event:place ?venue;
   event:time ?time;
   etree:description ?description;
-  skos:prefLabel ?performance.
+  skos:prefLabel ?performance;
+  etree:notes ?notes.
 
 ?art skos:prefLabel ?artist.
 
@@ -501,18 +503,22 @@ get '/venues' do
   results = VENUESCACHE
   if results == nil then
     squery = PREFIXES+<<END
-SELECT DISTINCT ?thing ?label WHERE {
-?sim sim:object ?thing.
-?sim sim:method etree:simpleLastfmMatch.
-?thing skos:prefLabel ?label.
-} ORDER BY ?label
+SELECT ?thing ?label ?count WHERE {
+ {
+  SELECT ?thing (COUNT(?sim) AS ?count) WHERE {
+  ?sim sim:object ?thing.
+  ?sim sim:method etree:simpleLastfmMatch.
+  } GROUP BY ?thing
+ }
+ ?thing skos:prefLabel ?label.
+} ORDER BY DESC(?count)
 END
     puts squery if BEHAVIOUR[:verbose]
     results = $sparql.query( squery )
     VENUESCACHE = results
   end
   puts results.inspect if BEHAVIOUR[:verbose]
-  markaby :things, :locals => {:pageTitle => "Venues", :type => "lastfm", :typeLabel => "Last FM Venues", :results => results}
+  markaby :venues, :locals => {:pageTitle => "Venues", :type => "lastfm", :typeLabel => "Last FM Venues", :results => results}
 end
 
 get '/stats' do

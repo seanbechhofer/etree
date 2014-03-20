@@ -1,3 +1,5 @@
+script '$(document).ready(function(){$(function(){$("#table").tablesorter();});});'
+
 # Expects typeLabel, type and results being things
 
 div.container do
@@ -5,11 +7,22 @@ div.container do
     div.send(:'col-md-12') do
       h1 "#{typeLabel}"
       table :id => "table", :class => "table table-striped table-condensed" do 
+        thead do
+          tr do
+            th "Venue"
+            th "Performances"
+          end
+        end
         tbody do
           results.each do |result|
             tr do
               td do
                 a result[:label], :href => "/#{type}/" + URIEncode(result[:thing])
+              end
+              td do
+                if result[:count] then
+                  span result[:count].to_s, :class => "badge alert-success" 
+                end
               end
             end
           end

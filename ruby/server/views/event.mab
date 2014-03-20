@@ -33,26 +33,36 @@ div.container do
           dd do
             a result[:id], :href => "http://archive.org/details/" + result[:id].to_s
           end
-          dt "location"
-          dd do
-            puts "|#{result[:lastfmName].inspect}|"
-            if (result[:lastfmName]) then
-              a result[:lastfmName], :href => "/lastfm/" + URIEncode(result[:lastfm])
-            end
-            if (result[:lastfmName] && result[:location]) then
-              span ", "
-            end
-            if (result[:location]) then
-              a result[:location], :href => "/geo/" + URIEncode(result[:geo])
+          if result[:lastfmName] or result[:location] then
+            dt "location"
+            dd do
+              puts "|#{result[:lastfmName].inspect}|"
+              if (result[:lastfmName]) then
+                a result[:lastfmName], :href => "/lastfm/" + URIEncode(result[:lastfm])
+              end
+              if (result[:lastfmName] && result[:location]) then
+                span ", "
+              end
+              if (result[:location]) then
+                a result[:location], :href => "/geo/" + URIEncode(result[:geo])
+              end
             end
           end
-          dt "country"
-          dd result[:country]
+          if result[:country] then
+            dt "country"
+            dd result[:country]
+          end
+          if !result[:notes].to_s.eql?("") then
+            dt "notes"
+            dd do
+              p result[:notes].to_s, :class => "text-success"
+            end
+          end
           dt "keywords"
           dd do
             keys.each do |key|
               a :href => "/key/" + key[:keyword].to_s do
-                button key[:keyword].to_s, :class => "btn btn-primary"
+                button key[:keyword].to_s, :class => "btn btn-primary btn-sm"
               end
               span " "
             end

@@ -36,8 +36,6 @@ div.container do
                         b = badge(result[:mbw])
                         span "%.2f" % b[:v], :class => b[:c]
                       end
-                      td :style => "width:10%" do
-                      end
                     end
                   end
                   if result[:opmb] 
