@@ -61,7 +61,7 @@ def generateMusicBrainzMappingRDF()
     if (row['confidence']) > 0 then
       artist = RDF::URI.new(ONTOLOGY + "artist/" + row['id'])
       # Use #_ for NIR
-      puts "X"
+      # puts "X"
       mbId = RDF::URI.new(MB + "artist/" + row['mbId'] + "#_")
       # Give the node an id so that pubby handles it well. @@Hack.
       sim = RDF::URI.new(ONTOLOGY + "artist/" + row['id'] + "/mb-sim")

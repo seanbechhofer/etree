@@ -7,6 +7,7 @@ require 'getopt/std'
 require 'config'
 
 # Specify Database file
+DATABASE = SQLite3::Database.new( DB )
 DATABASE.results_as_hash = true
 LOCATIONS = DATABASE
 # LOCATIONS = SQLite3::Database.new( "db/locations.db" )

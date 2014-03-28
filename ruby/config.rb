@@ -1,4 +1,4 @@
-DATABASE = SQLite3::Database.new( "/Users/seanb/Documents/etree.database/database.db" )
+DB = "/Users/seanb/Documents/etree.database/database.db"
 FILES = "/Users/seanb/Documents/etree.source"
 
 def logError(message)
