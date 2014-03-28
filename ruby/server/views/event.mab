@@ -10,79 +10,89 @@ div.container do
     end
     div.row do
       div.send(:'col-md-4') do
-        dl do |dl|
-          dt "artist"
-          dd do
-            a result[:artist], :href => "/artist/" + URIEncode(result[:art])
+        div :class => "panel panel-default"  do
+          div :class => "panel-heading" do
+            h2 "Metadata", :class => "panel-title"
           end
-          dt "date"
-          dd result[:date]
-          # if (result[:artMB]) then          
-          #   dt "setlist"
-          #   mb = result[:artMB].to_s
-          #   mbID = mb.sub("http://musicbrainz.org/artist/","").sub("#_","")
-          #   d = Date.parse(result[:date].to_s)
-          #   setlist = "http://api.setlist.fm/rest/0.1/search/setlists?artistMbid=#{mbID}&date=#{d.strftime('%d-%m-%Y')}"
-          #   dd do
-          #     a "setlist.fm", :href => setlist
-          #   end 
-          # end
-          dt "uploader"
-          dd result[:uploader]
-          dt "etree"
-          dd do
-            a result[:id], :href => "http://archive.org/details/" + result[:id].to_s
-          end
-          if result[:lastfmName] or result[:location] then
-            dt "location"
-            dd do
-              puts "|#{result[:lastfmName].inspect}|"
-              if (result[:lastfmName]) then
-                a result[:lastfmName], :href => "/lastfm/" + URIEncode(result[:lastfm])
+          div :class => "panel-body" do
+            dl do |dl|
+              dt "artist"
+              dd do
+                a result[:artist], :href => "/artist/" + URIEncode(result[:art])
               end
-              if (result[:lastfmName] && result[:location]) then
-                span ", "
+              dt "date"
+              dd result[:date]
+              # if (result[:artMB]) then          
+              #   dt "setlist"
+              #   mb = result[:artMB].to_s
+              #   mbID = mb.sub("http://musicbrainz.org/artist/","").sub("#_","")
+              #   d = Date.parse(result[:date].to_s)
+              #   setlist = "http://api.setlist.fm/rest/0.1/search/setlists?artistMbid=#{mbID}&date=#{d.strftime('%d-%m-%Y')}"
+              #   dd do
+              #     a "setlist.fm", :href => setlist
+              #   end 
+              # end
+              dt "uploader"
+              dd result[:uploader]
+              dt "etree"
+              dd do
+                a result[:id], :href => "http://archive.org/details/" + result[:id].to_s
               end
-              if (result[:location]) then
-                a result[:location], :href => "/geo/" + URIEncode(result[:geo])
+              if result[:lastfmName] or result[:location] then
+                dt "location"
+                dd do
+                  puts "|#{result[:lastfmName].inspect}|"
+                  if (result[:lastfmName]) then
+                    a result[:lastfmName], :href => "/lastfm/" + URIEncode(result[:lastfm])
+                  end
+                  if (result[:lastfmName] && result[:location]) then
+                    span ", "
+                  end
+                  if (result[:location]) then
+                    a result[:location], :href => "/geo/" + URIEncode(result[:geo])
+                  end
+                end
+              end
+              if result[:country] then
+                dt "country"
+                dd result[:country]
+              end
+              if !result[:notes].to_s.eql?("") then
+                dt "notes"
+                dd do
+                  p result[:notes].to_s, :class => "text-success"
+                end
+              end
+              dt "keywords"
+              dd do
+                keys.each do |key|
+                  a :href => "/key/" + key[:keyword].to_s do
+                    #                button key[:keyword].to_s, :class => "btn btn-primary btn-sm"
+                    span key[:keyword].to_s, :class => "label label-info"
+                  end
+                  span " "
+                end
+                
+                # if keys.size > 0 then
+                #   ul.keywords do 
+                #     keys.each do |key|
+                #       li do
+                #         a key[:keyword].to_s, :href => "/key/" + key[:keyword].to_s
+                #       end
+                #     end
+                #   end
+                # end
               end
             end
-          end
-          if result[:country] then
-            dt "country"
-            dd result[:country]
-          end
-          if !result[:notes].to_s.eql?("") then
-            dt "notes"
-            dd do
-              p result[:notes].to_s, :class => "text-success"
-            end
-          end
-          dt "keywords"
-          dd do
-            keys.each do |key|
-              a :href => "/key/" + key[:keyword].to_s do
-                button key[:keyword].to_s, :class => "btn btn-primary btn-sm"
-              end
-              span " "
-            end
-            
-            # if keys.size > 0 then
-            #   ul.keywords do 
-            #     keys.each do |key|
-            #       li do
-            #         a key[:keyword].to_s, :href => "/key/" + key[:keyword].to_s
-            #       end
-            #     end
-            #   end
-            # end
           end
         end
       end
-      div.send(:'col-md-4') do
-        dl do |dl|
-          dt "tracks"
-          dd do 
+      div.send(:'col-md-3') do
+        div :class => "panel panel-default"  do
+          div :class => "panel-heading" do
+            h2 "Track List", :class => "panel-title"
+          end
+          div :class => "panel-body" do
             if tracks.size > 0 then
               ol.tracks do
                 tracks.each do |track|
@@ -95,20 +105,27 @@ div.container do
           end
         end
       end
-      div.send(:'col-md-4') do
-        div.xspf do 
-          object :type => "application/x-shockwave-flash",
-          #    :data => "/audio-player/xspf_player/xspf_player.swf?playlist_url=http://localhost:4567/playlist/#{id}&autoplay=0&autoload=1&repeat_playlist=1&shuffle=1&bg_color=454545&txt_color=E6E6E6&volume_level=80", 
-          :width => "400", :height => "200" do
-            p.sorry "This jukebox player requires Flash. You may be able to play audio files by following the track links above."
-            param :name => "allownetworking", :value => "internal"
-            param :name => "movie", :value => "/audio-player/xspf_player/xspf_player.swf?playlist_url=http://localhost:31415/playlist/#{URIEncode(id)}&autoplay=0&autoload=1&repeat_playlist=1&shuffle=0&bg_color=454545&txt_color=E6E6E6&volume_level=80&album=off"
-            param :name => "allowScriptAccess", :value => "never"
-            param :name => "enableJSURL", :value => "false"
-            param :name => "enableHREF", :value => "false"
-            param :name => "saveEmbedTags", :value => "true"
-            param :name => "quality", :value => "high"
-            param :name => "wmode", :value => "transparent"
+      div.send(:'col-md-5') do
+        div :class => "panel panel-default"  do
+          div :class => "panel-heading" do
+            h2 "Player", :class => "panel-title"
+          end
+          div :class => "panel-body" do
+            div.xspf do 
+              object :type => "application/x-shockwave-flash",
+              #    :data => "/audio-player/xspf_player/xspf_player.swf?playlist_url=http://localhost:4567/playlist/#{id}&autoplay=0&autoload=1&repeat_playlist=1&shuffle=1&bg_color=454545&txt_color=E6E6E6&volume_level=80", 
+              :width => "300", :height => "200" do
+                p.sorry "This jukebox player requires Flash. You may be able to play audio files by following the track links above."
+                param :name => "allownetworking", :value => "internal"
+                param :name => "movie", :value => "/audio-player/xspf_player/xspf_player.swf?playlist_url=http://localhost:31415/playlist/#{URIEncode(id)}&autoplay=0&autoload=1&repeat_playlist=1&shuffle=0&bg_color=454545&txt_color=E6E6E6&volume_level=80&album=off"
+                param :name => "allowScriptAccess", :value => "never"
+                param :name => "enableJSURL", :value => "false"
+                param :name => "enableHREF", :value => "false"
+                param :name => "saveEmbedTags", :value => "true"
+                param :name => "quality", :value => "high"
+                param :name => "wmode", :value => "transparent"
+              end
+            end
           end
         end
       end

@@ -4,9 +4,9 @@ require 'yaml'
 require 'nokogiri'
 require 'open-uri'
 require 'getopt/std'
+require 'config'
 
 # Specify Database file
-DATABASE = SQLite3::Database.new( "db/database.db" )
 DATABASE.results_as_hash = true
 LOCATIONS = DATABASE
 # LOCATIONS = SQLite3::Database.new( "db/locations.db" )

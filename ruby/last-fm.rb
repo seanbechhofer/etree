@@ -6,6 +6,10 @@ require 'json'
 require 'yaml'
 require 'csv'
 require 'rexml/document'
+require 'sqlite3'
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+require 'db'
+require 'keys'
 
 LASTFM = "ws.audioscrobbler.com"
 
@@ -19,20 +23,34 @@ def last_fm_query(args)
     path = path + "api_key=#{LASTFM_KEY}"
     
     response = http.get(URI.escape(path))
-    result = REXML::Document.new(response.body)
+    result = response.body
     puts result.to_s if BEHAVIOUR[:debug]
     return result
   end
 end
 
-def last_fm_venue_query(query)
-  args = {
-    'method' => 'venue.search',
-    'venue' => query
-  }
-  result = last_fm_query(args)
+def last_fm_venue_query(query, cache_db)
+  lastfmResult = ""
+  stmt = cache_db.prepare( "select response from lastfm where query=?" )
+  rows = stmt.execute(query)
+  cached = rows.next() 
+  if cached then
+    puts "Retrieved from cache" if BEHAVIOUR[:debug]
+    puts cached.inspect if BEHAVIOUR[:debug]
+    lastfmResult = cached['response']
+  else
+    puts "Hitting lastfm" if BEHAVIOUR[:debug]
+    args = {
+      'method' => 'venue.search',
+      'venue' => query
+    }
+    lastfmResult = last_fm_query(args)
+    stmt = cache_db.prepare( "insert into lastfm (query,response) values (?,?)" )
+    puts "Caching" if BEHAVIOUR[:debug]
+    stmt.execute(query, lastfmResult)
+  end
   $venues = []
-  REXML::XPath.each(result, "lfm/results/venuematches/venue") {|v|
+  REXML::XPath.each(REXML::Document.new(lastfmResult), "lfm/results/venuematches/venue") {|v|
     $venue = {
       :id => v.elements["id"].text,
       :name => v.elements["name"].text,

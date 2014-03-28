@@ -39,78 +39,105 @@ end
 
 div.container do
   div.row do
-    div.send(:'col-md-12') do
+    div :class => "col-md-12" do
       h1 name
-      div do
-        table :class => "table table-striped table-condensed" do
-          tr do
-            td do
-              strong "Etree:" 
-            end
-            td do
-#             a query, :href => query
-              a :href => query do
-                button query, :class => "btn btn-primary" 
-              end
-            end
-          end
-          if mb then
+    end
+  end
+  div.row do
+    div :class => "col-md-12" do
+      div :class => "panel panel-default"  do
+        div :class => "panel-heading" do
+          h2 "Mappings", :class => "panel-title"
+        end
+        div :class => "panel-body" do
+          table :class => "table table-striped table-condensed" do
             tr do
               td do
-                strong "Music Brainz:" 
+                strong "Etree:" 
               end
               td do
-#                a mb, :href => mb
-                a :href => mb do
-                  button mb, :class => "btn btn-primary"
+                #             a query, :href => query
+                a :href => query do
+                  button query, :class => "btn btn-primary" 
                 end
               end
-            end
-          end
-          if opMB then
-            tr do
-              td do
-                strong "Music Brainz (OP):" 
-              end
-              td do
-#                a opMB, :href => opMB
-                a :href => opMB do
-                  button opMB, :class => "btn btn-primary"
+            end # tr
+            if mb then
+              tr do
+                td do
+                  strong "Music Brainz:" 
+                end
+                td do
+                  #                a mb, :href => mb
+                  a :href => mb do
+                    button mb, :class => "btn btn-primary"
+                  end
                 end
               end
-            end
-          end
-          if opLFM then
-            tr do
-              td do
-                strong "last.fm (OP):" 
-              end
-              td do
-#                a opLFM, :href => opLFM
-                a :href => opLFM do
-                  button opLFM, :class => "btn btn-primary"
+            end # if mb
+            if opMB then
+              tr do
+                td do
+                  strong "Music Brainz (OP):" 
+                end
+                td do
+                  #                a opMB, :href => opMB
+                  a :href => opMB do
+                    button opMB, :class => "btn btn-primary"
+                  end
                 end
               end
-            end
+            end # if opMB
+            if opLFM then
+              tr do
+                td do
+                  strong "last.fm (OP):" 
+                end
+                td do
+                  #                a opLFM, :href => opLFM
+                  a :href => opLFM do
+                    button opLFM, :class => "btn btn-primary"
+                  end
+                end
+              end
+            end # if opLFM
+          end # table
+        end # panel-body
+      end #panel
+    end
+    div :class => "col-md-12" do
+      div :class => "panel panel-default"  do
+        div :class => "panel-heading" do
+          h2 "Year Summary", :class => "panel-title"
+        end
+        div :class => "panel-body" do
+          div :id => "years" do
+            p "Loading....."
           end
         end
       end
-      h2 "Year summary"
-      div :id => "years" do
-        p "Loading....."
-      end
-      h2 "Performances"
-      div do
-        if results.size > 0 then
-          ol do |list|	  
-            results.each do |result|
-              list.li {
-                a result[:eventName], :href => "/event/" + URIEncode(result[:event])
-              }
+    end
+  end
+  div.row do
+    div :class => "col-md-12" do
+      div :class => "panel panel-default"  do
+        div :class => "panel-heading" do
+          h2 "Performances", :class => "panel-title"
+        end
+        div :class => "panel-body" do
+          div do
+            if results.size > 0 then
+              ol do |list|	  
+                results.each do |result|
+                  list.li {
+                    a result[:eventName], :href => "/event/" + URIEncode(result[:event])
+                  }
+                end
+              end
+            else
+              p "No Events"
             end
           end
-        else
-          p "No Events"
         end
       end
     end
