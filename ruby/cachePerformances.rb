@@ -38,6 +38,7 @@ stmt = DATABASE.prepare( query )
 rows = stmt.execute()
 
 count = 0
+foundCount = 0
 good = 0
 bad = 0
 rows.each do |row|
@@ -75,6 +76,11 @@ rows.each do |row|
       }
       print "Downloaded: #{identifier} files to #{local_files}\n"
     end
+    if found then
+      foundCount = foundCount + 1
+      print "Downloaded: #{foundCount}\n"
+    end
+
     # if (found) then
     #   puts ""
     # end

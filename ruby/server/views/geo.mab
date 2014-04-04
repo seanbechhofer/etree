@@ -14,13 +14,17 @@ div.container do
           end
         end
       end
-      h2 "Performances"
-      div do
-        ul do |ul|
-          results.each do |result|
-            ul.li {
-              a result[:event], :href => "/event/" + URIEncode(result[:evt])
-            }
+      div :class => "panel panel-default"  do
+        div :class => "panel-heading" do
+          h2 "Performances", :class => "panel-title"
+        end
+        div :class => "panel-body" do
+          ul do |ul|
+            results.each do |result|
+              ul.li {
+                a result[:event], :href => "/event/" + URIEncode(result[:evt])
+              }
+            end
           end
         end
       end

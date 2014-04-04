@@ -16,30 +16,6 @@ require 'generateArtistRDF'
 require 'generateGeoRDF'
 require 'logging'
 
-# Look for -o with argument, and -I and -D boolean arguments
-# opt = Getopt::Std.getopts("o:")
-# puts opt
-
-# arguments 
-# i: input
-# o: output
-# v: verbose
-# d: debug
-
-STYLE = "body {font-family: Gill Sans}
-a {text-decoration: none; color: #444}
-.banner {font-size: 300%; margin-bottom:10px; text-align: center;}
-.performance p {
-margin-bottom: 0px;
-margin-top: 0px;
-}
-.artist {font-size:150%; font-weight: bold}
-.performance .title {font-size:120%}
-.performance .location {margin-left: 10px;}
-.performance .files {margin-left: 10px; font-style: italic}
-.performance pre {margin-left: 10px;}
-"
-
 MB_SLEEP = 1
 
 BEHAVIOUR = {
@@ -249,20 +225,6 @@ when $command.eql?("performanceRDF")
           writer << statement
         end
       end
-      # File.open($f,"r") do |file|
-      #   file.each_line do |line|
-      #     # files should be of the form year/month
-      #     index = line.chomp
-      #     performance_names = "files/#{index}/index.txt"
-      #     puts performance_names if BEHAVIOUR[:verbose]
-      #     base = "files/#{index}"
-      #     begin
-      #       doPerformanceFile(performance_names,$out,$doTracks)
-      #     rescue Exception => e 
-      #       logError("Problem: #{e.inspect}")
-      #     end
-      #   end
-      # end
     rescue Exception => e 
       logError("Problem: #{e.inspect}")
     end

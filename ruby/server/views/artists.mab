@@ -27,18 +27,19 @@ div.container do
               end
               td do
                 table :style => "width:100%" do 
-                  if result[:mb] 
-                    tr do
-                      td :style => "width:80%" do
-                        a result[:mb], :href => result[:mb]   
-                      end
-                      td :style => "width:10%" do
-                        b = badge(result[:mbw])
-                        span "%.2f" % b[:v], :class => b[:c]
-                      end
-                    end
-                  end
-                  if result[:opmb] 
+                  # # Don't show SKB MB mappings. 
+                  # if result[:mb] 
+                  #   tr do
+                  #     td :style => "width:80%" do
+                  #       a result[:mb], :href => result[:mb]   
+                  #     end
+                  #     td :style => "width:10%" do
+                  #       b = badge(result[:mbw])
+                  #       span "%.2f" % b[:v], :class => b[:c]
+                  #     end
+                  #   end
+                  # end
+                  if result[:opmb] && result[:opmbw].to_d > 0 
                     tr do
                       td :style => "width:80%" do
                         a result[:opmb], :href => result[:opmb]
@@ -47,12 +48,12 @@ div.container do
                         b = badge(result[:opmbw])
                         span "%.2f" % b[:v], :class => b[:c]
                       end
-                      td :style => "width:10%" do
-                        span "OP", :class => "badge alert-info"
-                      end
+#                      td :style => "width:10%" do
+#                        span "OP", :class => "badge alert-info"
+#                      end
                     end
                   end
-                  if result[:oplfm] 
+                  if result[:oplfm] && result [:oplfmw] > 0
                     tr do 
                       td :style => "width:80%" do
                         a result[:oplfm], :href => result[:oplfm]
@@ -61,9 +62,9 @@ div.container do
                         b = badge(result[:oplfmw])
                         span "%.2f" % b[:v], :class => b[:c]
                       end
-                      td :style => "width:10%" do
-                        span "OP", :class => "badge alert-info"
-                      end
+#                      td :style => "width:10%" do
+#                        span "OP", :class => "badge alert-info"
+#                      end
                     end
                   end
                 end

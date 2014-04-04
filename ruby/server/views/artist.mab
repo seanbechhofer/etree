@@ -62,23 +62,23 @@ div.container do
                 end
               end
             end # tr
-            if mb then
-              tr do
-                td do
-                  strong "Music Brainz:" 
-                end
-                td do
-                  #                a mb, :href => mb
-                  a :href => mb do
-                    button mb, :class => "btn btn-primary"
-                  end
-                end
-              end
-            end # if mb
+            # if mb then
+            #   tr do
+            #     td do
+            #       strong "Music Brainz:" 
+            #     end
+            #     td do
+            #       #                a mb, :href => mb
+            #       a :href => mb do
+            #         button mb, :class => "btn btn-primary"
+            #       end
+            #     end
+            #   end
+            # end # if mb
             if opMB then
               tr do
                 td do
-                  strong "Music Brainz (OP):" 
+                  strong "Music Brainz" 
                 end
                 td do
                   #                a opMB, :href => opMB
@@ -91,7 +91,7 @@ div.container do
             if opLFM then
               tr do
                 td do
-                  strong "last.fm (OP):" 
+                  strong "last.fm:" 
                 end
                 td do
                   #                a opLFM, :href => opLFM
