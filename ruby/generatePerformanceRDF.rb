@@ -75,31 +75,20 @@ def generatePerformanceRDF(performances, doTracks)
         artist = RDF::URI.new(ONTOLOGY + "artist/" + artist_id)
         
         type = RDF.type
-#        mo_performance = RDF::URI.new(MO + "Performance")
-#        etree_concert = RDF::URI.new(ETREE + "Concert")
-#        etree_track = RDF::URI.new(ETREE + "Track")
+
         $graph << [performance, type, VOCAB_MO_PERFORMANCE]
         $graph << [performance, type, VOCAB_ETREE_CONCERT]
 
-#        etree_id = RDF::URI.new(ETREE + "id")
         $graph << [performance, VOCAB_ETREE_ID, RDF::Literal.new(perf[:identifier])] if perf[:identifier]
         
-#        mo_performer = RDF::URI.new(MO + "performer")
-#        mo_performed = RDF::URI.new(MO + "performed")
-        
-#        notes = RDF::URI.new(ETREE + "notes")
         $graph << [performance, VOCAB_NOTES, RDF::Literal.new(perf[:notes])] if perf[:notes]
         
-#        description = RDF::URI.new(ETREE + "description")
         $graph << [performance, VOCAB_DESCRIPTION, RDF::Literal.new(perf[:description])] if perf[:description]
         
-#        lineage = RDF::URI.new(ETREE + "lineage")
         $graph << [performance, VOCAB_LINEAGE, RDF::Literal.new(perf[:lineage])] if perf[:lineage]
         
-#        source = RDF::URI.new(ETREE + "source")
         $graph << [performance, VOCAB_SOURCE, RDF::Literal.new(perf[:source])] if perf[:source]
 
-#        uploader = RDF::URI.new(ETREE + "uploader")
         $graph << [performance, VOCAB_UPLOADER, RDF::Literal.new(perf[:uploader])] if perf[:uploader]
 
         keywords = []
@@ -107,7 +96,6 @@ def generatePerformanceRDF(performances, doTracks)
         #Fixing split on commas and semicolons
         keywords = perf[:subject].split(/\s*[,;]\s*/) if perf[:subject]
 
-#        keyword = RDF::URI.new(ETREE + "keyword")
         keywords.each do |kw|
           $graph << [performance, VOCAB_KEYWORD, RDF::Literal.new(kw.strip)] 
         end
@@ -207,7 +195,13 @@ def generatePerformanceRDF(performances, doTracks)
                   if fileNum == num then
                     tracks[num][:title] = file[:title]
                     if file[:format] && file[:name] then
-                      tracks[num][:versions] << {:format => file[:format], :name => file[:name]}
+                      tracks[num][:versions] << 
+                        {
+                        :format => file[:format], 
+                        :name => file[:name], 
+                        :source => file[:source],
+                        :original => file[:original]
+                      }
                     end
                   end
                 rescue Exception => ex
@@ -236,6 +230,23 @@ def generatePerformanceRDF(performances, doTracks)
                   puts "@@Download links" if BEHAVIOUR[:debug]
                   audioNode = RDF::URI.new("http://archive.org/download/" + performance_id + "/" + version[:name])
                   $graph << [trackNode, VOCAB_AUDIO, audioNode]
+                  # Type the file
+                  $graph << [audioNode, type, VOCAB_MO_AUDIOFILE]
+                  # Add information about whether it is original or derived
+                  if version[:source] then
+                    if version[:source] == "original" then
+                      $graph << [audioNode, VOCAB_AUDIODERIVATIONSTATUS, VOCAB_AUDIODERIVATIONORIGINAL]
+                    elsif version[:source] == "derivative" then
+                      $graph << [audioNode, VOCAB_AUDIODERIVATIONSTATUS, VOCAB_AUDIODERIVATIONDERIVED]
+                    end
+                  end
+                  # If there is information about the original audio, include that in the derived RDF
+                  # This probably needs work...
+                  if version[:source] == "derivative" then
+                    originalNode = RDF::URI.new("http://archive.org/download/" + performance_id + "/" + version[:original])
+                    $graph << [audioNode, VOCAB_AUDIODERIVEDFROM, originalNode]
+                    $graph << [originalNode, type, VOCAB_MO_AUDIOFILE]
+                  end
                 end
                 # Also need to add various things about the files etc. 
               end

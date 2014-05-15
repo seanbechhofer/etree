@@ -64,6 +64,7 @@ def doPerformanceFile(performance_names,doTracks)
           puts "DB: >> #{file['name']}" if BEHAVIOUR[:debug]
           event[:files] << {
             :name => file['name'],
+            :source => file['source'],
             :creator => file['creator'],
             :title => file['title'],
             :album => file['album'],

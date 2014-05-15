@@ -152,11 +152,13 @@ def addEventFilesFile(url,event)
   files = []
   doc = Nokogiri::XML(open(url))
   puts doc if BEHAVIOUR[:debug]
-  # creator, title, track, album, bitrate, length, format, original, md5, mtime, size, crc32, sha1, album, 
+  # name, source, creator, title, track, album, bitrate, length, format, original, md5, mtime, size, crc32, sha1, album, 
   doc.xpath("//files/file").each do |f|
     file = {}
     file[:name] = ""
     file[:name] = f.get_attribute("name") if f.get_attribute("name")
+    file[:source] = ""
+    file[:source] = f.get_attribute("source") if f.get_attribute("source")
     file[:creator] = ""
     file[:creator] = f.xpath("creator")[0].content if f.xpath("creator")[0]
     file[:title] = ""
@@ -183,8 +185,8 @@ def addEventFilesFile(url,event)
     file[:crc32] = f.xpath("crc32")[0].content if f.xpath("crc32")[0]
     file[:sha1] = ""
     file[:sha1] = f.xpath("sha1")[0].content if f.xpath("sha1")[0]
-    ins = DATABASE.prepare( "insert into files (name,creator,title,album,track,bitrate,length,format,original,md5,mtime,size,crc32,sha1,event) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);" )
-    ins.execute(file[:name],file[:creator],file[:title],file[:album],file[:track],file[:bitrate],file[:length],file[:format],file[:original],file[:md5],file[:mtime],file[:size],file[:crc32],file[:sha1],event)
+    ins = DATABASE.prepare( "insert into files (name,source,creator,title,album,track,bitrate,length,format,original,md5,mtime,size,crc32,sha1,event) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);" )
+    ins.execute(file[:name],file[:source],file[:creator],file[:title],file[:album],file[:track],file[:bitrate],file[:length],file[:format],file[:original],file[:md5],file[:mtime],file[:size],file[:crc32],file[:sha1],event)
   end
   return files
 end

@@ -253,7 +253,17 @@ SELECT ?artist ?trackName ?artistName ?event ?eventName ?num WHERE {
 }
 END
   results = $sparql.query( query )
-  markaby :track, :locals => {:pageTitle => "Track", :query => trackID, :results => results}
+
+  audioQuery = PREFIXES+<<END
+SELECT ?audio ?status WHERE {
+<#{trackID}> etree:audio ?audio.
+?audio etree:audioDerivationStatus ?status.
+}
+ORDER BY DESC(?status)
+END
+  audioResults = $sparql.query( audioQuery )
+
+  markaby :track, :locals => {:pageTitle => "Track", :query => trackID, :results => results, :audio => audioResults}
 end
 
 get '/event/*' do

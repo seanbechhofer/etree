@@ -36,8 +36,7 @@ script do
 END
 end
 
-
-div.container do
+#div.container do
   div.row do
     div :class => "col-md-12" do
       h1 name
@@ -142,4 +141,4 @@ div.container do
       end
     end
   end
-end
+#end

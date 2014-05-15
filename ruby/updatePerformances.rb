@@ -9,7 +9,7 @@ require 'db'
 # This won't get file information for those that have metadata but no files. 
 
 # Limit the query if necessary. If this is used, we'll need to re-run this script multiple times. 
-#LIMIT = "limit 20000"
+LIMIT = "limit 20000"
 LIMIT=""
 BEHAVIOUR = {
   :debug => false,

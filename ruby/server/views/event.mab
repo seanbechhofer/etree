@@ -9,7 +9,7 @@ div.container do
       end
     end
     div.row do
-      div.send(:'col-md-4') do
+      div.send(:'col-md-6') do
         div :class => "panel panel-default"  do
           div :class => "panel-heading" do
             h2 "Metadata", :class => "panel-title"
@@ -63,31 +63,42 @@ div.container do
                   p result[:notes].to_s, :class => "text-success"
                 end
               end
-              dt "keywords"
-              dd do
-                keys.each do |key|
-                  a :href => "/key/" + key[:keyword].to_s do
-                    #                button key[:keyword].to_s, :class => "btn btn-primary btn-sm"
-                    span key[:keyword].to_s, :class => "label label-info"
-                  end
-                  span " "
-                end
+              # dt "keywords"
+              # dd do
+              #   keys.each do |key|
+              #     a :href => "/key/" + key[:keyword].to_s do
+              #       #                button key[:keyword].to_s, :class => "btn btn-primary btn-sm"
+              #       span key[:keyword].to_s, :class => "label label-primary"
+              #     end
+              #     span " "
+              #   end
+
+
                 
-                # if keys.size > 0 then
-                #   ul.keywords do 
-                #     keys.each do |key|
-                #       li do
-                #         a key[:keyword].to_s, :href => "/key/" + key[:keyword].to_s
-                #       end
-                #     end
-                #   end
-                # end
+              #   # if keys.size > 0 then
+              #   #   ul.keywords do 
+              #   #     keys.each do |key|
+              #   #       li do
+              #   #         a key[:keyword].to_s, :href => "/key/" + key[:keyword].to_s
+              #   #       end
+              #   #     end
+              #   #   end
+              #   # end
+              # end
+            end
+            div do
+              keys.each do |key|
+                a :href => "/key/" + key[:keyword].to_s do
+                  #                button key[:keyword].to_s, :class => "btn btn-primary btn-sm"
+                  span key[:keyword].to_s, :class => "label label-primary"
+                end
+                span " "
               end
             end
           end
         end
       end
-      div.send(:'col-md-3') do
+      div.send(:'col-md-6') do
         div :class => "panel panel-default"  do
           div :class => "panel-heading" do
             h2 "Track List", :class => "panel-title"
@@ -97,7 +108,7 @@ div.container do
               ol.tracks do
                 tracks.each do |track|
                   li do 
-                    a track[:trackName], :href => track[:track].to_s
+                    a track[:trackName], :href => "/track/" + URIEncode(track[:track])
                   end
                 end
               end
@@ -105,7 +116,9 @@ div.container do
           end
         end
       end
-      div.send(:'col-md-5') do
+    end
+    div.row do
+      div.send(:'col-md-12') do
         div :class => "panel panel-default"  do
           div :class => "panel-heading" do
             h2 "Player", :class => "panel-title"
@@ -114,7 +127,7 @@ div.container do
             div.xspf do 
               object :type => "application/x-shockwave-flash",
               #    :data => "/audio-player/xspf_player/xspf_player.swf?playlist_url=http://localhost:4567/playlist/#{id}&autoplay=0&autoload=1&repeat_playlist=1&shuffle=1&bg_color=454545&txt_color=E6E6E6&volume_level=80", 
-              :width => "300", :height => "200" do
+              :width => "800", :height => "400" do
                 p.sorry "This jukebox player requires Flash. You may be able to play audio files by following the track links above."
                 param :name => "allownetworking", :value => "internal"
                 param :name => "movie", :value => "/audio-player/xspf_player/xspf_player.swf?playlist_url=http://localhost:31415/playlist/#{URIEncode(id)}&autoplay=0&autoload=1&repeat_playlist=1&shuffle=0&bg_color=454545&txt_color=E6E6E6&volume_level=80&album=off"

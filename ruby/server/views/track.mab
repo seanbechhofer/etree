@@ -1,0 +1,50 @@
+div.container do
+  div.row do
+    div.send(:'col-md-12') do
+      h1 results[0][:trackName]
+      div do
+        table :class => "table table-striped table-condensed" do
+          tr do 
+            td do strong "artist:" end
+            td do a results[0][:artistName], :href => results[0][:artist] end
+          end
+          tr do 
+            td do strong "performance:" end
+            td do a results[0][:eventName], :href => results[0][:event] end
+          end
+          tr do 
+            td do strong "track:" end
+            td do results[0][:num] end
+          end
+          tr do
+            td do
+              strong "etree:" 
+            end
+            td do
+              a query, :href => query
+            end
+          end
+        end
+      end
+      div :class => "panel panel-default"  do
+        div :class => "panel-heading" do
+          h2 "Audio", :class => "panel-title"
+        end
+        div :class => "panel-body" do
+          table :class => "table table-striped table-condensed" do
+            audio.each do |au|
+              tr do 
+                if au[:status].to_s.include?("derivedAudio") 
+                  td do strong "derived:" end
+                else
+                  td do strong "original:" end
+                end
+                td do a au[:audio], :href => au[:audio] end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
