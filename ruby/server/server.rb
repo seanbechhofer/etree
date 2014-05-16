@@ -9,6 +9,8 @@ require 'markaby'
 require 'markaby/sinatra'
 require 'json'
 require 'csv'
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+require 'config'
 
 require './stats'
 
@@ -23,7 +25,7 @@ BEHAVIOUR = {
   :verbose => true
 }
 
-ENDPOINT="http://localhost:3030/etree/sparql"
+#ENDPOINT="http://localhost:3030/etree/sparql"
 #ENDPOINT="http://etree.linkedmusic.org/sparql"
 #ENDPOINT="http://linkedmusic.oerc.ox.ac.uk:3030/etree/sparql"
 ETREE="http://etree.linkedmusic.org/"
@@ -271,10 +273,11 @@ get '/event/*' do
   perfID = params[:splat][0]
   puts perfID if BEHAVIOUR[:verbose]
   query = PREFIXES+<<END
-SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?notes ?uploader ?geo ?location ?country ?lastfm ?lastfmName
+SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?notes ?uploader ?lineage ?geo ?location ?country ?lastfm ?lastfmName
 {
 <#{perfID}> mo:performer ?art;
   etree:uploader ?uploader;
+  etree:lineage ?lineage;
   etree:id ?id;
   event:place ?venue;
   event:time ?time;

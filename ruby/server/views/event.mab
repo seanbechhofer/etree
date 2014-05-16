@@ -38,6 +38,8 @@ div.container do
               dd do
                 a result[:id], :href => "http://archive.org/details/" + result[:id].to_s
               end
+              dt "lineage"
+              dd result[:lineage]
               if result[:lastfmName] or result[:location] then
                 dt "location"
                 dd do
@@ -130,7 +132,7 @@ div.container do
               :width => "800", :height => "400" do
                 p.sorry "This jukebox player requires Flash. You may be able to play audio files by following the track links above."
                 param :name => "allownetworking", :value => "internal"
-                param :name => "movie", :value => "/audio-player/xspf_player/xspf_player.swf?playlist_url=http://localhost:31415/playlist/#{URIEncode(id)}&autoplay=0&autoload=1&repeat_playlist=1&shuffle=0&bg_color=454545&txt_color=E6E6E6&volume_level=80&album=off"
+                param :name => "movie", :value => "/audio-player/xspf_player/xspf_player.swf?playlist_url=http://#{HOST}/playlist/#{URIEncode(id)}&autoplay=0&autoload=1&repeat_playlist=1&shuffle=0&bg_color=454545&txt_color=E6E6E6&volume_level=80&album=off"
                 param :name => "allowScriptAccess", :value => "never"
                 param :name => "enableJSURL", :value => "false"
                 param :name => "enableHREF", :value => "false"

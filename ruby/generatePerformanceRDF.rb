@@ -232,6 +232,10 @@ def generatePerformanceRDF(performances, doTracks)
                   $graph << [trackNode, VOCAB_AUDIO, audioNode]
                   # Type the file
                   $graph << [audioNode, type, VOCAB_MO_AUDIOFILE]
+
+                  # Add format information (as literal)
+                  $graph << [audioNode, VOCAB_AUDIOFORMAT, RDF::Literal.new(version[:format])] if version[:format]
+                  
                   # Add information about whether it is original or derived
                   if version[:source] then
                     if version[:source] == "original" then
