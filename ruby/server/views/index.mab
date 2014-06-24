@@ -30,8 +30,32 @@ script do
 				  
            var column = new google.visualization.ColumnChart(document.getElementById('years'));
 	   column.draw(yearTable, columnChartOptions);
-	 });
+
+	   });
        
+           // Get mapping summaries
+           var mdata = $.getJSON("/mappings",
+                                 {},
+                                 function(mdata) {
+           console.log('mdata = ', mdata);
+	   mappingTable = new google.visualization.DataTable();
+           mappingTable.addColumn('string', 'Category');
+           mappingTable.addColumn('number', 'Count');
+           mappingTable.addRow(['No Mapping',parseInt(mdata["none"])]);
+           mappingTable.addRow(['MusicBrainz & last.fm',parseInt(mdata["both"])]);
+           mappingTable.addRow(['MusicBrainz only',parseInt(mdata["mb"])]);
+           mappingTable.addRow(['last.fm only',parseInt(mdata["lfm"])]);
+
+	   // Set chart options
+           var mcolumnChartOptions = {title:'Artist Mappings',
+			       height:400
+           };
+				  
+           var mcolumn = new google.visualization.PieChart(document.getElementById('mappings'));
+	   mcolumn.draw(mappingTable, mcolumnChartOptions);
+
+	   });
+
      }
 
 END
@@ -104,6 +128,16 @@ div.container do
       h2 "Overview Statistics" 
       div.send(:'col-md-12') do
         div :id => "years" do
+          p "Loading....."
+        end
+        # div do
+        #   span do
+        #     strong "Performances by Year"
+        #   end
+        # end
+      end
+      div.send(:'col-md-12') do
+        div :id => "mappings" do
           p "Loading....."
         end
         # div do

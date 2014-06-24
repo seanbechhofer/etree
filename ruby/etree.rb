@@ -223,7 +223,14 @@ when $command.eql?("performanceRDF")
       graph = doPerformanceFile($f,$doTracks)
       RDF::Writer.for(:ntriples).open($out) do |writer|
         graph.each_statement do |statement|
+          # Needed to catch the exception in the loop as otherwise the
+          # rendering bails and we don't get all of the graph
+          # rendered.
+          begin 
           writer << statement
+          rescue Exception => e 
+            logError("Problem Writing: #{e.inspect}")
+          end
         end
       end
     rescue Exception => e 

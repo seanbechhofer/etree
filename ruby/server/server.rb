@@ -239,7 +239,22 @@ END
   nameResults = $sparql.query( query )
   opLFM = nameResults.first[:opLFM]
 
-  markaby :artist, :locals => {:pageTitle => artistName, :query => artistID, :name => artistName, :mb => artistMB, :opMB => opMB, :opLFM => opLFM, :results => results}
+  query = PREFIXES+<<END
+SELECT DISTINCT ?name ?mslFM WHERE {
+<#{artistID}> skos:prefLabel ?name.
+OPTIONAL {
+?sim sim:subject <#{artistID}>.
+?sim sim:object ?mslFM.
+?sim sim:method etree:simpleArtistSetlistFMMatch.
+}
+} 
+END
+  nameResults = $sparql.query( query )
+  mslFM = nameResults.first[:mslFM]
+
+
+
+  markaby :artist, :locals => {:pageTitle => artistName, :query => artistID, :name => artistName, :mb => artistMB, :opMB => opMB, :opLFM => opLFM, :mslFM => mslFM, :results => results}
 end
   
 get '/track/*' do
@@ -273,7 +288,7 @@ get '/event/*' do
   perfID = params[:splat][0]
   puts perfID if BEHAVIOUR[:verbose]
   query = PREFIXES+<<END
-SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?notes ?uploader ?lineage ?geo ?location ?country ?lastfm ?lastfmName
+SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?notes ?uploader ?lineage ?geo ?location ?country ?lastfm ?lastfmName ?setlistfm
 {
 <#{perfID}> mo:performer ?art;
   etree:uploader ?uploader;
@@ -307,6 +322,12 @@ OPTIONAL {
 ?sim3 sim:subject ?art.
 ?sim3 sim:object ?artMB.
 ?sim3 sim:method etree:simpleMusicBrainzMatch.
+}
+
+OPTIONAL {
+?sim4 sim:subject ?venue.
+?sim4 sim:object ?setlistfm.
+?sim4 sim:method etree:simpleSFMLocationMatch.
 }
 
 }
@@ -463,7 +484,7 @@ get '/artists' do
   results = ARTISTSCACHE
   if results == nil then
     squery = PREFIXES+<<END
-SELECT ?thing ?label ?mb ?mbw ?opmb ?opmbw ?oplfm ?oplfmw WHERE {
+SELECT ?thing ?label ?mb ?mbw ?opmb ?opmbw ?oplfm ?oplfmw ?slfm ?slfmw WHERE {
 ?thing rdf:type mo:MusicArtist.
 ?thing skos:prefLabel ?label.
 OPTIONAL {
@@ -483,6 +504,13 @@ OPTIONAL {
 ?sim3 sim:object ?oplfm.
 ?sim3 sim:method etree:opLastFMMatch.
 ?sim3 sim:weight ?oplfmw.
+}
+
+OPTIONAL {
+?sim4 sim:subject ?thing.
+?sim4 sim:object ?slfm.
+?sim4 sim:method etree:simpleArtistSetlistFMMatch.
+?sim4 sim:weight ?slfmw.
 }
 
 } ORDER BY ?label
@@ -547,4 +575,8 @@ end
 get '/years-csv/*' do
   artistID = params[:splat][0]
   getYearSummaryCSV($sparql, artistID)
+end
+
+get '/mappings' do
+  JSON.pretty_generate(getMappingSummary($sparql))
 end

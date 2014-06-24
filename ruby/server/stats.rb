@@ -228,3 +228,61 @@ END
   end
   return years
 end
+
+def getMappingSummary(endpoint)
+# Returns basic information about numbers of performances per year.
+
+  squery = PREFIXES+<<END
+SELECT ?artist ?mb (STR(?mbw) AS ?mw) ?lfm (STR(?lfmw) as ?lw)
+WHERE {
+  ?artist rdf:type mo:MusicArtist.
+  OPTIONAL {
+    ?sim1 sim:subject ?artist.
+    ?sim1 sim:object ?mb.
+    ?sim1 sim:method etree:opMusicBrainzMatch.
+    ?sim1 sim:weight ?mbw.
+    FILTER (?mbw > 0)
+  }
+  OPTIONAL { 
+    ?sim2 sim:subject ?artist.
+    ?sim2 sim:object ?lfm.
+    ?sim2 sim:method etree:opLastFMMatch.
+    ?sim2 sim:weight ?lfmw.
+    FILTER (?lfmw > 0)
+  }
+} 
+END
+  spqresults = endpoint.query( squery )
+  stats = {
+    :total => 0,
+    :none => 0,
+    :mb => 0,
+    :lfm => 0,
+    :both => 0
+  }
+  spqresults.each do |result|
+    stats[:total] = stats[:total] + 1
+    if (result[:mb].nil? and result[:lfm].nil?) then
+      stats[:none] = stats[:none] + 1
+    end
+    if (!result[:mb].nil? and !result[:lfm].nil?) then
+      stats[:both] = stats[:both] + 1
+    end
+    if (result[:mb].nil? and !result[:lfm].nil?) then
+      stats[:lfm] = stats[:lfm] + 1
+    end
+    if (!result[:mb].nil? and result[:lfm].nil?) then
+      stats[:mb] = stats[:mb] + 1
+    end
+  end
+  return stats
+#   mappings = CSV.generate do |csv|
+#     csv << ["category", "count"]
+# #    csv << ["total",stats[:total]]
+#     csv << ["none",stats[:none]]
+#     csv << ["both",stats[:both]]
+#     csv << ["mb",stats[:mb]]
+#     csv << ["lfm",stats[:lfm]]
+#   end
+#   return mappings
+end

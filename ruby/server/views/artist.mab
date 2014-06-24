@@ -100,6 +100,19 @@ end
                 end
               end
             end # if opLFM
+            if mslFM then
+              tr do
+                td do
+                  strong "setlist.fm:" 
+                end
+                td do
+                  #                a opLFM, :href => opLFM
+                  a :href => mslFM do
+                    button mslFM, :class => "btn btn-primary"
+                  end
+                end
+              end
+            end # if opLFM
           end # table
         end # panel-body
       end #panel
