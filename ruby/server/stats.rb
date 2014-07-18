@@ -233,7 +233,7 @@ def getMappingSummary(endpoint)
 # Returns basic information about numbers of performances per year.
 
   squery = PREFIXES+<<END
-SELECT ?artist ?mb (STR(?mbw) AS ?mw) ?lfm (STR(?lfmw) as ?lw)
+SELECT ?artist ?mb (STR(?mbw) AS ?mw) ?lfm (STR(?lfmw) as ?lw) ?slfm (STR(?slfm) as ?slw)
 WHERE {
   ?artist rdf:type mo:MusicArtist.
   OPTIONAL {
@@ -250,6 +250,13 @@ WHERE {
     ?sim2 sim:weight ?lfmw.
     FILTER (?lfmw > 0)
   }
+  OPTIONAL { 
+    ?sim3 sim:subject ?artist.
+    ?sim3 sim:object ?slfm.
+    ?sim3 sim:method etree:simpleArtistSetlistFMMatch.
+    ?sim3 sim:weight ?slfmw.
+    FILTER (?slfmw > 0)
+  }
 } 
 END
   spqresults = endpoint.query( squery )
@@ -258,21 +265,21 @@ END
     :none => 0,
     :mb => 0,
     :lfm => 0,
-    :both => 0
+    :slfm => 0
   }
   spqresults.each do |result|
     stats[:total] = stats[:total] + 1
-    if (result[:mb].nil? and result[:lfm].nil?) then
+    if (result[:mb].nil? and result[:lfm].nil? and result[:slfm].nil?) then
       stats[:none] = stats[:none] + 1
     end
-    if (!result[:mb].nil? and !result[:lfm].nil?) then
-      stats[:both] = stats[:both] + 1
+    if (!result[:mb].nil?) then
+      stats[:mb] = stats[:mb] + 1
     end
-    if (result[:mb].nil? and !result[:lfm].nil?) then
+    if (!result[:lfm].nil?) then
       stats[:lfm] = stats[:lfm] + 1
     end
-    if (!result[:mb].nil? and result[:lfm].nil?) then
-      stats[:mb] = stats[:mb] + 1
+    if (!result[:slfm].nil?) then
+      stats[:slfm] = stats[:slfm] + 1
     end
   end
   return stats

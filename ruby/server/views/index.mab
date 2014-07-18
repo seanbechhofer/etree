@@ -42,16 +42,18 @@ script do
            mappingTable.addColumn('string', 'Category');
            mappingTable.addColumn('number', 'Count');
            mappingTable.addRow(['No Mapping',parseInt(mdata["none"])]);
-           mappingTable.addRow(['MusicBrainz & last.fm',parseInt(mdata["both"])]);
-           mappingTable.addRow(['MusicBrainz only',parseInt(mdata["mb"])]);
-           mappingTable.addRow(['last.fm only',parseInt(mdata["lfm"])]);
+           mappingTable.addRow(['MusicBrainz',parseInt(mdata["mb"])]);
+           mappingTable.addRow(['last.fm',parseInt(mdata["lfm"])]);
+           mappingTable.addRow(['setlist.fm',parseInt(mdata["slfm"])]);
 
 	   // Set chart options
            var mcolumnChartOptions = {title:'Artist Mappings',
-			       height:400
+			       height:400,
+                               hAxis:{slantedText:true, slantedTextAngle:45},
+                               bar: {groupWidth: "95%"},
            };
 				  
-           var mcolumn = new google.visualization.PieChart(document.getElementById('mappings'));
+           var mcolumn = new google.visualization.ColumnChart(document.getElementById('mappings'));
 	   mcolumn.draw(mappingTable, mcolumnChartOptions);
 
 	   });
@@ -126,7 +128,7 @@ div.container do
         p "This demo illustrates query over our Linked Data conversion of the Internet Archive's Live Music Archive (LMA) metadata. The LMA contains some 100,000 live recorded performances, recorded with the consent of the artists. Metadata describing the event is included, largely as free text."
       end
       h2 "Overview Statistics" 
-      div.send(:'col-md-12') do
+      div.send(:'col-md-8') do
         div :id => "years" do
           p "Loading....."
         end
@@ -136,7 +138,7 @@ div.container do
         #   end
         # end
       end
-      div.send(:'col-md-12') do
+      div.send(:'col-md-4') do
         div :id => "mappings" do
           p "Loading....."
         end

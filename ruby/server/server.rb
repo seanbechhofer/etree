@@ -13,6 +13,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'config'
 
 require './stats'
+require './songs'
 
 set :port, 31415
 # Listen to any host
@@ -260,13 +261,18 @@ end
 get '/track/*' do
   trackID = params[:splat][0]
   query = PREFIXES+<<END
-SELECT ?artist ?trackName ?artistName ?event ?eventName ?num WHERE {
+SELECT ?artist ?trackName ?artistName ?event ?eventName ?num ?setlistfmSong WHERE {
 <#{trackID}> mo:performer ?artist.
 ?artist skos:prefLabel ?artistName.
 <#{trackID}> skos:prefLabel ?trackName.
 <#{trackID}> etree:isSubEventOf ?event.
 <#{trackID}> etree:number ?num.
 ?event skos:prefLabel ?eventName.
+OPTIONAL {
+?sim sim:subject <#{trackID}>.
+?sim sim:object ?setlistfmSong.
+?sim sim:method etree:simpleSongSetlistFMMatch.
+}
 }
 END
   results = $sparql.query( query )
@@ -288,7 +294,7 @@ get '/event/*' do
   perfID = params[:splat][0]
   puts perfID if BEHAVIOUR[:verbose]
   query = PREFIXES+<<END
-SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?notes ?uploader ?lineage ?geo ?location ?country ?lastfm ?lastfmName ?setlistfm
+SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?notes ?uploader ?lineage ?geo ?location ?country ?lastfm ?lastfmName ?setlistfmEvent ?setlistfm
 {
 <#{perfID}> mo:performer ?art;
   etree:uploader ?uploader;
@@ -303,6 +309,12 @@ SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?notes ?
 ?art skos:prefLabel ?artist.
 
 ?time timeline:beginsAtDateTime ?date.
+
+OPTIONAL {
+?sim sim:subject <#{perfID}>.
+?sim sim:object ?setlistfmEvent.
+?sim sim:method etree:simpleSetlistFMMatch.
+}
 
 OPTIONAL {
 ?sim sim:subject ?venue.
@@ -579,4 +591,10 @@ end
 
 get '/mappings' do
   JSON.pretty_generate(getMappingSummary($sparql))
+end
+
+get '/songs/*' do
+  content_type :json
+  artistID = params[:splat][0]
+  JSON.pretty_generate(getSongCounts($sparql, artistID))
 end

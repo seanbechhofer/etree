@@ -24,6 +24,17 @@ div.container do
               a query, :href => query
             end
           end
+          if (results[0][:setlistfmSong]) then
+            tr do
+              td do
+                strong "setlist.fm:" 
+              end
+              td do
+
+                a URI(results[0][:setlistfmSong].to_s).path.split('/').last, :href => results[0][:setlistfmSong].to_s
+              end
+            end
+          end
         end
       end
       div :class => "panel panel-default"  do
