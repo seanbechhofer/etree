@@ -6,7 +6,7 @@ require 'sinatra'
 require 'sparql/client'
 #require 'haml'
 require 'markaby'
-require 'markaby/sinatra'
+#require 'markaby/sinatra'
 require 'json'
 require 'csv'
 $LOAD_PATH.unshift(File.dirname(__FILE__))
@@ -246,7 +246,7 @@ SELECT DISTINCT ?name ?mslFM WHERE {
 OPTIONAL {
 ?sim sim:subject <#{artistID}>.
 ?sim sim:object ?mslFM.
-?sim sim:method etree:simpleArtistSetlistFMMatch.
+?sim sim:method etree:mroSetListFMArtistMatch.
 }
 } 
 END
@@ -294,7 +294,7 @@ get '/event/*' do
   perfID = params[:splat][0]
   puts perfID if BEHAVIOUR[:verbose]
   query = PREFIXES+<<END
-SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?notes ?uploader ?lineage ?geo ?location ?country ?lastfm ?lastfmName ?setlistfmEvent ?setlistfm
+SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?notes ?uploader ?lineage ?geo ?location ?country ?lastfm ?lastfmName ?lastfmEvent ?setlistfmEvent ?setlistfm
 {
 <#{perfID}> mo:performer ?art;
   etree:uploader ?uploader;
@@ -313,12 +313,12 @@ SELECT DISTINCT ?performance ?id ?art ?artist ?artMB ?date ?description ?notes ?
 OPTIONAL {
 ?sim sim:subject <#{perfID}>.
 ?sim sim:object ?setlistfmEvent.
-?sim sim:method etree:simpleSetlistFMMatch.
+?sim sim:method etree:mroSetListFMPerformanceMatch.
 }
 
 OPTIONAL {
-?sim sim:subject ?venue.
-?sim sim:object ?geo.
+?sim1 sim:subject ?venue.
+?sim1 sim:object ?geo.
 ?geo geo:name ?location.
 ?geo geo:countryCode ?country.
 }
@@ -339,7 +339,13 @@ OPTIONAL {
 OPTIONAL {
 ?sim4 sim:subject ?venue.
 ?sim4 sim:object ?setlistfm.
-?sim4 sim:method etree:simpleSFMLocationMatch.
+?sim4 sim:method etree:mroSetListFMVenueMatch.
+}
+
+OPTIONAL {
+?sim5 sim:subject <#{perfID}>.
+?sim5 sim:object ?lastfmEvent.
+?sim5 sim:method etree:mroLastFMPerformanceMatch.
 }
 
 }
@@ -521,7 +527,7 @@ OPTIONAL {
 OPTIONAL {
 ?sim4 sim:subject ?thing.
 ?sim4 sim:object ?slfm.
-?sim4 sim:method etree:simpleArtistSetlistFMMatch.
+?sim4 sim:method etree:mroSetListFMArtistMatch.
 ?sim4 sim:weight ?slfmw.
 }
 

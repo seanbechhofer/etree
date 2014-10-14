@@ -253,7 +253,7 @@ WHERE {
   OPTIONAL { 
     ?sim3 sim:subject ?artist.
     ?sim3 sim:object ?slfm.
-    ?sim3 sim:method etree:simpleArtistSetlistFMMatch.
+    ?sim3 sim:method etree:mroSetListFMArtistMatch.
     ?sim3 sim:weight ?slfmw.
     FILTER (?slfmw > 0)
   }

@@ -42,7 +42,7 @@ div.container do
                 dt "lineage"
                 dd result[:lineage]
               end
-              if result[:lastfmName] or result[:location] then
+              if (result[:lastfmName] or result[:location] or result[:setlistfm]) then
                 dt "location"
                 dd do
                   puts "|#{result[:lastfmName].inspect}|"
@@ -73,6 +73,12 @@ div.container do
                 dt "setlist.fm"
                 dd do
                   a URI(result[:setlistfmEvent].to_s).path.split('/').last, :href => result[:setlistfmEvent].to_s
+                end
+              end
+              if result[:lastfmEvent] then
+                dt "last.fm"
+                dd do
+                  a URI(result[:lastfmEvent].to_s).path.split('/').last, :href => result[:lastfmEvent].to_s
                 end
               end
               if !result[:notes].to_s.eql?("") then
