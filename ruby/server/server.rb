@@ -34,6 +34,7 @@ MBENDPOINT="http://dbtune.org/musicbrainz/sparql"
 
 PREFIXES=<<END
 PREFIX etree:<http://etree.linkedmusic.org/vocab/>
+PREFIX calma:<http://calma.linkedmusic.org/vocab/>
 PREFIX mo:<http://purl.org/ontology/mo/>
 PREFIX event:<http://purl.org/NET/c4dm/event.owl#>
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
@@ -261,7 +262,7 @@ end
 get '/track/*' do
   trackID = params[:splat][0]
   query = PREFIXES+<<END
-SELECT ?artist ?trackName ?artistName ?event ?eventName ?num ?setlistfmSong WHERE {
+SELECT ?artist ?trackName ?artistName ?event ?eventName ?num ?setlistfmSong ?calma WHERE {
 <#{trackID}> mo:performer ?artist.
 ?artist skos:prefLabel ?artistName.
 <#{trackID}> skos:prefLabel ?trackName.
@@ -272,6 +273,9 @@ OPTIONAL {
 ?sim sim:subject <#{trackID}>.
 ?sim sim:object ?setlistfmSong.
 ?sim sim:method etree:simpleSongSetlistFMMatch.
+}
+OPTIONAL {
+<#{trackID}> calma:data ?calma.
 }
 }
 END
