@@ -293,3 +293,36 @@ END
 #   end
 #   return mappings
 end
+
+def getCALMASummary(endpoint)
+# Returns basic information about numbers of performances with CALMA data.
+
+  squery = PREFIXES+<<END
+SELECT ?artistname (COUNT(?track) AS ?tracks) {
+ ?artist skos:prefLabel ?artistname.
+ ?track mo:performer ?artist.
+ ?track rdf:type etree:Track.
+ ?track calma:data ?data.
+} GROUP BY ?artistname
+ORDER BY DESC(?tracks)
+
+END
+
+  spqresults = endpoint.query( squery )
+  calma = []
+  spqresults.each do |result|
+    calma << {"artist" => result[:artistname], "tracks" => result[:tracks]}
+  end
+  stuff = {}
+  stuff["calma.summary"] = calma
+  return stuff
+#   mappings = CSV.generate do |csv|
+#     csv << ["category", "count"]
+# #    csv << ["total",stats[:total]]
+#     csv << ["none",stats[:none]]
+#     csv << ["both",stats[:both]]
+#     csv << ["mb",stats[:mb]]
+#     csv << ["lfm",stats[:lfm]]
+#   end
+#   return mappings
+end

@@ -603,6 +603,10 @@ get '/mappings' do
   JSON.pretty_generate(getMappingSummary($sparql))
 end
 
+get '/calma' do
+  JSON.pretty_generate(getCALMASummary($sparql))
+end
+
 get '/songs/*' do
   content_type :json
   artistID = params[:splat][0]
