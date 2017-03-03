@@ -7,7 +7,7 @@ script do
      google.setOnLoadCallback(doChart);
      
      function doChart() {
-           $.getJSON("/years/#{query}",
+           $.getJSON("/data/years/#{query}",
                                  {},
                                  function(data) {
            console.log('data = ', data);

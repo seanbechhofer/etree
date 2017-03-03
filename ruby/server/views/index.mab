@@ -9,7 +9,7 @@ script do
      function getData() {
            var col = "#284270";
      	   
-           var data = $.getJSON("/years/",
+           var data = $.getJSON("/data/years/",
                                  {},
                                  function(data) {
            console.log('data = ', data);
@@ -37,7 +37,7 @@ script do
 	   });
        
            // Get mapping summaries
-           var mdata = $.getJSON("/mappings",
+           var mdata = $.getJSON("/data/mappings",
                                  {},
                                  function(mdata) {
            console.log('mdata = ', mdata);
@@ -63,7 +63,7 @@ script do
 
 	   });
 
-           var cdata = $.getJSON("/calma",
+           var cdata = $.getJSON("/data/calma-stats",
                                  {},
                                  function(cdata) {
            console.log('cdata = ', cdata);
@@ -107,7 +107,7 @@ div.container do
               form :action => "search", :class => "form-horizontal" do 
                                           div :class => 'form-group' do
                                             label "Search:", :class => "col-sm-1 control-label"
-                                            div :class => "col-sm-1" do
+                                            div :class => "col-sm-2" do
                                               select :class => "form-control", :name => "type" do
                                                                                  option "Artists", :value => "artist"
                                                                                  option "Events", :value => "event"
@@ -115,11 +115,11 @@ div.container do
                                                                                  option "Locations", :value => "geo"
                                                                                end
                                             end
-                                            div :class => "col-sm-5" do
+                                            div :class => "col-sm-4" do
                                               input :type => "text", :class => "form-control", :name => "query"
                                             end
                                             div :class => "col-sm-1" do
-                                              button :type => "submit", :class => "btn btn-primary" do
+                                              button :type => "submit", :class => "btn btn-basic" do
                                                                           span "Search" #:class => "glyphicon glyphicon-search"
                                                                         end
                                             end
@@ -141,7 +141,7 @@ div.container do
                                                                              end
                                           end
                                           div :class => "col-sm-1" do
-                                            button :type => "submit", :class => "btn btn-primary" do
+                                            button :type => "submit", :class => "btn btn-basic" do
                                                                         span "Search" #:class => "glyphicon glyphicon-search"
                                                                       end
                                           end

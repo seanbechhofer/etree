@@ -26,9 +26,6 @@ BEHAVIOUR = {
   :verbose => true
 }
 
-#ENDPOINT="http://localhost:3030/etree/sparql"
-#ENDPOINT="http://etree.linkedmusic.org/sparql"
-#ENDPOINT="http://linkedmusic.oerc.ox.ac.uk:3030/etree/sparql"
 ETREE="http://etree.linkedmusic.org/"
 MBENDPOINT="http://dbtune.org/musicbrainz/sparql"
 
@@ -489,6 +486,25 @@ END
   markaby :geo, :locals => {:pageTitle => venueName, :query => geoID, :name => venueName, :results => results}
 end
 
+get '/country/*' do
+  countryCode = params[:splat][0]
+  puts countryCode
+  query = PREFIXES+<<END
+SELECT ?thing ?label {
+?thing event:place ?venue.
+?thing skos:prefLabel ?label.
+?sim1 sim:subject ?venue.
+?sim1 sim:object ?geo.
+?geo geo:name ?location.
+?geo geo:countryCode "#{countryCode}".
+} 
+END
+  puts query if BEHAVIOUR[:verbose]
+  results = $sparql.query( query )
+  puts results.inspect if BEHAVIOUR[:verbose]
+  markaby :search, :locals => {:pageTitle => "Country: #{countryCode}", :query => countryCode, :type => "event", :results => results}
+end
+
 get '/key/*' do
   key = params[:splat][0]
   query = PREFIXES+<<END
@@ -562,6 +578,22 @@ END
   markaby :things, :locals => {:pageTitle => "Locations", :type => "geo", :typeLabel => "Locations", :results => results}
 end
 
+get '/countries' do
+  squery = PREFIXES+<<END
+SELECT ?thing (COUNT(?venue) AS ?count) (concat(concat (?thing, " (", COUNT(?venue)), ")") AS ?label) {
+?sim1 sim:subject ?venue.
+?sim1 sim:object ?geo.
+?geo geo:name ?location.
+?geo geo:countryCode ?thing.
+} GROUP BY ?thing
+ORDER BY DESC(?count)
+END
+  puts squery if BEHAVIOUR[:verbose]
+  results = $sparql.query( squery )
+  puts results.inspect if BEHAVIOUR[:verbose]
+  markaby :things, :locals => {:pageTitle => "Countries", :type => "country", :typeLabel => "Countries", :results => results}
+end
+
 get '/venues' do
   results = VENUESCACHE
   if results == nil then
@@ -584,30 +616,44 @@ END
   markaby :venues, :locals => {:pageTitle => "Venues", :type => "lastfm", :typeLabel => "Last FM Venues", :results => results}
 end
 
-get '/stats' do
+
+get '/calma' do
+  markaby :calma, :locals => {:pageTitle => "CALMA"}
+end
+
+get '/dashboard' do
+  markaby :dashboard, :locals => {:pageTitle => "etree"}
+end
+
+# Methods returning various aggregate data. 
+
+get '/data/stats' do
+  content_type :json
   JSON.pretty_generate(getStats($sparql))
 end
 
-get '/years/*' do
+get '/data/years/*' do
   content_type :json
   artistID = params[:splat][0]
   JSON.pretty_generate(getYearSummary($sparql, artistID))
 end
 
-get '/years-csv/*' do
+get '/data/years-csv/*' do
   artistID = params[:splat][0]
   getYearSummaryCSV($sparql, artistID)
 end
 
-get '/mappings' do
+get '/data/mappings' do
+  content_type :json
   JSON.pretty_generate(getMappingSummary($sparql))
 end
 
-get '/calma' do
+get '/data/calma-stats' do
+  content_type :json
   JSON.pretty_generate(getCALMASummary($sparql))
 end
 
-get '/songs/*' do
+get '/data/songs/*' do
   content_type :json
   artistID = params[:splat][0]
   JSON.pretty_generate(getSongCounts($sparql, artistID))

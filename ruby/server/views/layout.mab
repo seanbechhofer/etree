@@ -6,7 +6,7 @@ html do
     link :rel => "stylesheet", :href => "/css/etree.css"
     script :type => "text/javascript", :src => "/jquery.js" do
     end	   
-    script :type => "text/javascript", :src => "jquery.tablesorter.min.js" do
+    script :type => "text/javascript", :src => "/jquery.tablesorter.min.js" do
     end
     script :type => "text/javascript", :src => "https://www.google.com/jsapi" do
     end	   
@@ -18,22 +18,27 @@ html do
           span :class => "icon-bar"
           span :class => "icon-bar"
           span :class => "icon-bar"
+          span :class => "icon-bar"
+          span :class => "icon-bar"
         end
         a "etree.linkedmusic.org", :class => "navbar-brand", :href => "/"
       end
       div :class => "collapse navbar-collapse" do
         ul :class => "nav navbar-nav" do
-          li :class => "active" do
+          li :class => "" do
             a "About", :href => "/"
           end
           li do
             a "Artists", :href => "/artists"
           end
           li do
+            a "Venues", :href => "/venues"
+          end
+          li do
             a "Locations", :href => "/locations"
           end
           li do
-            a "Venues", :href => "/venues"
+            a "Countries", :href => "/countries"
           end
         end
       end

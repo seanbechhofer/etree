@@ -69,26 +69,30 @@ def generateGeoNamesMappingRDF()
       finished = false
       puts row['identifier'] if BEHAVIOUR[:debug]
       puts row['geo_id'] if BEHAVIOUR[:debug]
-      venue = RDF::URI.new(ONTOLOGY + "venue/" + row['identifier'])
-      geoname = RDF::URI.new("http://www.geonames.org/" + row['geo_id'])
-
-      # Give the node an id so that pubby handles it well. @@Hack.
-      sim = RDF::URI.new(ONTOLOGY + "venue/" + row['identifier'] + "/geo-sim" )
-      $graph << [sim, type, VOCAB_SIM_SIMILARITY]
-      $graph << [sim, VOCAB_SIM_SUBJECT, venue]
-      $graph << [venue, VOCAB_SIM_SUBJECT_OF, sim]
-      $graph << [sim, VOCAB_SIM_OBJECT, geoname]
-      $graph << [geoname, VOCAB_SIM_OBJECT_OF, sim]
-
-      # Provenance triple -- this conversion was made by an activity that Sean was responsible for. 
-      $graph << [sim, VOCAB_PROV_ATTRIBUTED_TO, SEAN]
-
-      if row['lastfm_id'] then
-        # Used geo and last fm to crosscheck. 
-        $graph << [sim, VOCAB_SIM_METHOD, VOCAB_ETREE_SIMPLE_GEO_AND_LASTFM_MATCH]
-      else
-        # Only geo information used
-        $graph << [sim, VOCAB_SIM_METHOD, VOCAB_ETREE_SIMPLE_GEO_MATCH]
+      if row['geo_id'] != "-----" then
+        venue = RDF::URI.new(ONTOLOGY + "venue/" + row['identifier'])
+        # This is probably wrong and should be http://sws.geonames.org/xxxxxxxx/
+        #      geoname = RDF::URI.new("http://www.geonames.org/" + row['geo_id'])
+        geoname = RDF::URI.new("http://sws.geonames.org/" + row['geo_id'] + "/")
+        
+        # Give the node an id so that pubby handles it well. @@Hack.
+        sim = RDF::URI.new(ONTOLOGY + "venue/" + row['identifier'] + "/geo-sim" )
+        $graph << [sim, type, VOCAB_SIM_SIMILARITY]
+        $graph << [sim, VOCAB_SIM_SUBJECT, venue]
+        $graph << [venue, VOCAB_SIM_SUBJECT_OF, sim]
+        $graph << [sim, VOCAB_SIM_OBJECT, geoname]
+        $graph << [geoname, VOCAB_SIM_OBJECT_OF, sim]
+        
+        # Provenance triple -- this conversion was made by an activity that Sean was responsible for. 
+        $graph << [sim, VOCAB_PROV_ATTRIBUTED_TO, SEAN]
+        
+        if row['lastfm_id'] then
+          # Used geo and last fm to crosscheck. 
+          $graph << [sim, VOCAB_SIM_METHOD, VOCAB_ETREE_SIMPLE_GEO_AND_LASTFM_MATCH]
+        else
+          # Only geo information used
+          $graph << [sim, VOCAB_SIM_METHOD, VOCAB_ETREE_SIMPLE_GEO_MATCH]
+        end
       end
     end
     puts "@@@ Done Chunk #{offset}" if BEHAVIOUR[:verbose]
@@ -107,11 +111,15 @@ def generateGeoDataRDF()
   gnCountryCode = RDF::URI.new("http://www.geonames.org/ontology#countryCode")
   
   rows.each do |row|
-    puts row['geo_id'] if BEHAVIOUR[:debug]
-    puts row['geo_name'] if BEHAVIOUR[:debug]
-    geoname = RDF::URI.new("http://www.geonames.org/" + row['geo_id'])
-    $graph << [geoname, gnName, RDF::Literal.new(row['geo_name'])]
-    $graph << [geoname, gnCountryCode, RDF::Literal.new(row['geo_country'])]
+    if row['geo_id'] != "-----" then
+      puts row['geo_id'] if BEHAVIOUR[:debug]
+      puts row['geo_name'] if BEHAVIOUR[:debug]
+      # This is probably wrong and should be http://sws.geonames.org/xxxxxxxx/
+      #geoname = RDF::URI.new("http://www.geonames.org/" + row['geo_id'])
+      geoname = RDF::URI.new("http://sws.geonames.org/" + row['geo_id'] + "/")
+      $graph << [geoname, gnName, RDF::Literal.new(row['geo_name'])]
+      $graph << [geoname, gnCountryCode, RDF::Literal.new(row['geo_country'])]
+    end
   end
   return $graph
 end
